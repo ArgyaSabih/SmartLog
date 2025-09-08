@@ -1,6 +1,6 @@
-# Repositori Apa ini lah
+# Repositori Smartlog
 
-## IT Apa ini lah 💻
+## Apa ini lah 💻
 
 | Jabatan           | Nama                                   | NIM                |
 |-------------------|----------------------------------------|--------------------|
