@@ -16,6 +16,8 @@ public class Admin
 
     public string? Role { get; set; }
     public string? Nama { get; set; }
+
+    public bool? IsVerified { get; set; }
     public bool Login(string email, string password)
     {
         if (this.Email == email && this.PasswordHash == Utils.HashPassword(password))
