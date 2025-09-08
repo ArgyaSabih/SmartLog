@@ -76,15 +76,6 @@ Contoh: feat[Homepage]: Creating about section
 
 - kalo branch mu udah di merge, jangan lupa juga buat hapus branch mu dari github (biar rapi :>)
 
-# SmartLog
-
-Sistem monitoring barang dagang ekspor impor berbasis cuaca, jalur pelayaran, dan ketersediaan barang dagang.
-
-Nama Kelompok: Apa ini lah <br />
-Ketua Kelompok: Polikarpus Arya Pradhanika - 23/512404/TK/56325 <br />
-Anggota 1: Muhammad Rhizal Rhomadon - 23/514719/TK/56511 <br />
-Anggota 2: Argya Sabih Elysio - 23/512630/TK/56335<br />
-
 ## Class Diagram
 
 Berikut adalah rancangan class diagram yang dibuat
