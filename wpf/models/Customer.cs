@@ -18,7 +18,6 @@ public class Customer
 
     public List<Pengiriman> DaftarPengiriman { get; set; } = new();
 
-    // Register: hash password dan simpan data customer
     public void Register(string email, string password, string nama, string alamat, string nomorTelepon)
     {
         Email = email;
@@ -26,11 +25,9 @@ public class Customer
         Nama = nama;
         Alamat = alamat;
         NomorTelepon = nomorTelepon;
-        // Simpan ke database jika ada
         Console.WriteLine($"Customer {Nama} berhasil registrasi.");
     }
 
-    // Login: verifikasi email dan password
     public bool Login(string email, string password)
     {
         if (this.Email == email && this.PasswordHash == Utils.HashPassword(password))
@@ -40,7 +37,6 @@ public class Customer
         return false;
     }
 
-    // Membuat pengiriman baru
     public void BuatPengiriman(Pengiriman pengirimanBaru)
     {
         pengirimanBaru.CustomerId = CustomerId;
@@ -48,7 +44,6 @@ public class Customer
         Console.WriteLine($"Pengiriman baru dibuat untuk Customer {CustomerId}");
     }
 
-    // Melacak pengiriman berdasarkan ID pengiriman
     public string LacakPengiriman(long pengirimanId)
     {
         var pengiriman = DaftarPengiriman.Find(p => p.PengirimanId == pengirimanId);
