@@ -83,3 +83,11 @@ Berikut adalah rancangan class diagram yang dibuat
 <div style="text-align: center;">
   <img alt="Class Diagram" src="./docs/class-diagram.png" width="550px" style="display: block; margin: auto;"/>
 </div>
+
+## Entity Relation DIagram
+
+Berikut adalah rancangan erd yang dibuat
+
+<div style="text-align: center;">
+  <img alt="ERD" src="./docs/erd.png" width="550px" style="display: block; margin: auto;"/>
+</div>
