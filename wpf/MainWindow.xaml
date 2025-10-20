@@ -5,9 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <StackPanel>
-        <TextBlock FontSize="24">Ini contoh text</TextBlock> 
-        <TextBlock>Polikarpus</TextBlock>
-    </StackPanel>
+        Title="Aplikasi Utama" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <TextBlock Text="Selamat Datang di Aplikasi Utama!"
+                   FontSize="24"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
+    </Grid>
 </Window>
