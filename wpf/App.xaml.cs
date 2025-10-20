@@ -11,16 +11,15 @@ namespace wpf // Ganti dengan nama namespace proyek Anda
         {
             base.OnStartup(e);
 
-            // Buat instance jendela Login
+            // Buat instance jendela Login terlebih dahulu
+            // User bisa memilih untuk Login atau pindah ke Register
             LoginView loginWindow = new LoginView();
 
             // Tampilkan jendela Login sebagai dialog (modal)
-            // Kode akan berhenti di sini sampai jendela login ditutup
-            bool? dialogResult = loginWindow.ShowDialog();
+            bool? loginResult = loginWindow.ShowDialog();
 
-            // Periksa hasil dari dialog. 
-            // Kita akan atur agar Login.xaml mengembalikan 'true' jika berhasil.
-            if (dialogResult == true)
+            // Jika login berhasil, buka MainWindow
+            if (loginResult == true)
             {
                 // Jika login berhasil, buat dan tampilkan MainWindow
                 MainWindow mainWindow = new MainWindow();
@@ -28,8 +27,7 @@ namespace wpf // Ganti dengan nama namespace proyek Anda
             }
             else
             {
-                // Jika login gagal, dibatalkan, atau ditutup [x],
-                // matikan aplikasi.
+                // Jika login dibatalkan atau ditutup, matikan aplikasi
                 Application.Current.Shutdown();
             }
         }

@@ -1,18 +1,16 @@
 using System.Windows;
-using System.Windows.Input; // Diperlukan untuk MouseLeftButtonDown
+using System.Windows.Input;
 using System.Windows.Controls;
 
-
-// Pastikan namespace ini sesuai dengan proyek Anda
 namespace wpf.modules
 {
-    public partial class LoginView : Window
+    public partial class RegisterView : Window
     {
-        public LoginView()
+        public RegisterView()
         {
             InitializeComponent();
             
-            // Tambahkan event handler ini agar window bisa di-drag
+            // Tambahkan event handler agar window bisa di-drag
             this.MouseLeftButtonDown += OnMouseLeftButtonDown;
             
             // Trik untuk watermark PasswordBox
@@ -23,50 +21,72 @@ namespace wpf.modules
 
         // --- METODE UNTUK TOMBOL ---
 
-        private void BtnLogin_Click(object sender, RoutedEventArgs e)
+        private void BtnRegistrasi_Click(object sender, RoutedEventArgs e)
         {
-            string username = txtEmail.Text;
+            string nama = txtNama.Text;
+            string username = txtUsername.Text;
+            string email = txtEmail.Text;
             string password = txtPassword.Password;
+            string telepon = txtTelepon.Text;
+            string alamat = txtAlamat.Text;
 
-            if (username == "admin" && password == "password123")
+            // Validasi sederhana
+            if (string.IsNullOrWhiteSpace(nama) || 
+                string.IsNullOrWhiteSpace(username) || 
+                string.IsNullOrWhiteSpace(email) || 
+                string.IsNullOrWhiteSpace(password) || 
+                string.IsNullOrWhiteSpace(telepon) || 
+                string.IsNullOrWhiteSpace(alamat))
             {
-                MessageBox.Show("Login Berhasil!");
-                this.DialogResult = true;
+                MessageBox.Show("Semua field harus diisi!", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
-            else
+
+            // Validasi email sederhana
+            if (!email.Contains("@") || !email.Contains("."))
             {
-                MessageBox.Show("Email atau password salah.");
+                MessageBox.Show("Format email tidak valid!", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
+
+            // Proses registrasi (implementasi sesuai kebutuhan)
+            MessageBox.Show($"Registrasi berhasil!\n\nNama: {nama}\nUsername: {username}\nEmail: {email}", 
+                          "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+            
+            // Set DialogResult ke true dan tutup window
+            this.DialogResult = true;
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;
         }
-        
-        // --- METODE BANTUAN ---
 
-        private void CreateAccount_Click(object sender, RoutedEventArgs e)
+        private void GoToLogin_Click(object sender, RoutedEventArgs e)
         {
-            // Buka jendela Register
-            RegisterView registerWindow = new RegisterView();
-            bool? result = registerWindow.ShowDialog();
+            // Tutup jendela Register dan buka Login
+            this.Close();
             
-            // Jika registrasi berhasil, bisa ditambahkan logika tambahan di sini
+            LoginView loginWindow = new LoginView();
+            bool? result = loginWindow.ShowDialog();
+            
+            // Jika login berhasil, buka MainWindow
             if (result == true)
             {
-                MessageBox.Show("Registrasi berhasil! Silakan login dengan akun baru Anda.", 
-                              "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.Show();
             }
         }
+        
+        // --- METODE BANTUAN ---
         
         // Membuat window bisa di-drag
         private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // Cek apakah yang diklik bukan tombol atau input
+            // Cek apakah yang diklik bukan input field
             if (e.Source == sender) 
             {
-                 this.DragMove();
+                this.DragMove();
             }
         }
 
@@ -75,7 +95,6 @@ namespace wpf.modules
         // Saat PasswordBox mendapat fokus, sembunyikan watermark
         private void TxtPassword_GotFocus(object sender, RoutedEventArgs e)
         {
-            // Cari TextBlock Watermark di dalam Template PasswordBox
             var watermark = txtPassword.Template.FindName("Watermark", txtPassword) as TextBlock;
             if (watermark != null)
             {
@@ -86,7 +105,6 @@ namespace wpf.modules
         // Saat PasswordBox kehilangan fokus
         private void TxtPassword_LostFocus(object? sender, RoutedEventArgs? e)
         {
-            // Cari TextBlock Watermark
             var watermark = txtPassword.Template.FindName("Watermark", txtPassword) as TextBlock;
             if (watermark != null)
             {

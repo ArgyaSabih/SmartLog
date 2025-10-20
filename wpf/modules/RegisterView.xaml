@@ -1,0 +1,304 @@
+<Window x:Class="wpf.modules.RegisterView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:wpf.modules"
+        mc:Ignorable="d"
+        Title="Register" Height="700" Width="650"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" AllowsTransparency="True"
+        Background="Transparent">
+
+    <Window.Resources>
+        
+        <Style x:Key="InputBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <TextBlock x:Name="Watermark" Text="{TemplateBinding Tag}" 
+                                       Foreground="#B0B0B0" VerticalAlignment="Center"
+                                       Margin="10,0,0,0" IsHitTestVisible="False"/>
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" 
+                                          Margin="10,0,0,0"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Text" Value=""/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
+                            </MultiTrigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PasswordBoxStyle" TargetType="PasswordBox">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Grid>
+                            <TextBlock x:Name="Watermark" Text="{TemplateBinding Tag}" 
+                                       Foreground="#B0B0B0" VerticalAlignment="Center"
+                                       Margin="10,0,0,0" IsHitTestVisible="False"
+                                       Visibility="Collapsed"/>
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" 
+                                          Margin="10,0,0,0"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Watermark" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RegisterButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1F4959"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder" 
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="#335F6F"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="#1A3A4A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+    </Window.Resources>
+
+    <Grid>
+        <Border Background="#E6F4F7" CornerRadius="15"/>
+
+        <Border Background="White" CornerRadius="15" 
+                Margin="50" 
+                Padding="40">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header Section -->
+                <Border Grid.Row="0" Background="#1F4959" 
+                        CornerRadius="10" 
+                        Padding="30,40"
+                        Margin="0,0,0,20">
+                    <StackPanel>
+                        <!-- Ship Icon Placeholder -->
+                        <Viewbox Width="120" Height="100" Margin="0,0,0,20">
+                            <Canvas Width="120" Height="100">
+                                <!-- Simple ship representation -->
+                                <Polygon Points="20,70 40,30 80,30 100,70" 
+                                         Fill="#7FC5D9" Stroke="#5BA5B8" StrokeThickness="2"/>
+                                <Rectangle Canvas.Left="35" Canvas.Top="40" 
+                                           Width="50" Height="30" 
+                                           Fill="#F39C6B" Stroke="#D97E52" StrokeThickness="2"/>
+                                <Polygon Points="60,20 65,40 55,40" Fill="#E85D4A"/>
+                                <!-- Water -->
+                                <Rectangle Canvas.Top="70" Width="120" Height="30" 
+                                           Fill="#7FC5D9" Opacity="0.5"/>
+                            </Canvas>
+                        </Viewbox>
+                        
+                        <TextBlock Text="Registrasikan Dirimu!"
+                                   Foreground="White" FontSize="28" FontWeight="Bold"
+                                   HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                        
+                        <TextBlock Text="Selamat Datang di SmartLogistic!"
+                                   Foreground="#B0C9D2" FontSize="14"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Form Section -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        
+                        <TextBlock Text="Silahkan mengisi data diri anda!"
+                                   FontSize="14" Foreground="#666666"
+                                   HorizontalAlignment="Center" Margin="0,0,0,20"
+                                   TextAlignment="Center"/>
+
+                        <Separator Margin="0,0,0,20" Background="LightGray"/>
+
+                        <!-- Row 1: Nama & Username -->
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" Background="#F8F9FA" CornerRadius="8" Padding="0" Height="40">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="👤" Grid.Column="0" VerticalAlignment="Center" 
+                                               FontSize="16" Margin="10,0,5,0"/>
+                                    <TextBox x:Name="txtNama" Grid.Column="1" 
+                                             Tag="Nama" 
+                                             Style="{StaticResource InputBoxStyle}"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Column="2" Background="#F8F9FA" CornerRadius="8" Padding="0" Height="40">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="👤" Grid.Column="0" VerticalAlignment="Center" 
+                                               FontSize="16" Margin="10,0,5,0"/>
+                                    <TextBox x:Name="txtUsername" Grid.Column="1" 
+                                             Tag="Username" 
+                                             Style="{StaticResource InputBoxStyle}"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <!-- Row 2: Email & Password -->
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" Background="#F8F9FA" CornerRadius="8" Padding="0" Height="40">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="📧" Grid.Column="0" VerticalAlignment="Center" 
+                                               FontSize="16" Margin="10,0,5,0"/>
+                                    <TextBox x:Name="txtEmail" Grid.Column="1" 
+                                             Tag="Email" 
+                                             Style="{StaticResource InputBoxStyle}"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Column="2" Background="#F8F9FA" CornerRadius="8" Padding="0" Height="40">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="🔒" Grid.Column="0" VerticalAlignment="Center" 
+                                               FontSize="16" Margin="10,0,5,0"/>
+                                    <PasswordBox x:Name="txtPassword" Grid.Column="1" 
+                                                 Tag="Password" 
+                                                 Style="{StaticResource PasswordBoxStyle}"/>
+                                    <TextBlock Text="👁️" Grid.Column="2" VerticalAlignment="Center" 
+                                               FontSize="16" Cursor="Hand" Margin="0,0,10,0"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <!-- Row 3: Telepon & Alamat -->
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" Background="#F8F9FA" CornerRadius="8" Padding="0" Height="40">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="📞" Grid.Column="0" VerticalAlignment="Center" 
+                                               FontSize="16" Margin="10,0,5,0"/>
+                                    <TextBox x:Name="txtTelepon" Grid.Column="1" 
+                                             Tag="Telepon" 
+                                             Style="{StaticResource InputBoxStyle}"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Column="2" Background="#F8F9FA" CornerRadius="8" Padding="0" Height="40">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="📍" Grid.Column="0" VerticalAlignment="Center" 
+                                               FontSize="16" Margin="10,0,5,0"/>
+                                    <TextBox x:Name="txtAlamat" Grid.Column="1" 
+                                             Tag="Alamat" 
+                                             Style="{StaticResource InputBoxStyle}"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <!-- Link to Login -->
+                        <TextBlock HorizontalAlignment="Center" Margin="0,15,0,0">
+                            <Run Text="Sudah punya akun?" Foreground="Gray"/>
+                            <Hyperlink Click="GoToLogin_Click" TextDecorations="None">
+                                <Run Text="Login di sini" FontWeight="Bold" Foreground="#1F4959"/>
+                            </Hyperlink>
+                        </TextBlock>
+
+                        <!-- Register Button -->
+                        <Button x:Name="btnRegistrasi" 
+                                Content="Registrasi" 
+                                Margin="0,15,0,0"
+                                Height="45"
+                                Style="{StaticResource RegisterButtonStyle}"
+                                Click="BtnRegistrasi_Click"/>
+
+                        <!-- Cancel Button (Hidden) -->
+                        <Button x:Name="btnCancel" IsCancel="True" Click="BtnCancel_Click" 
+                                Visibility="Collapsed"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
