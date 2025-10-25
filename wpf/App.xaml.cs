@@ -11,25 +11,14 @@ namespace wpf // Ganti dengan nama namespace proyek Anda
         {
             base.OnStartup(e);
 
-            // Buat instance jendela Login terlebih dahulu
-            // User bisa memilih untuk Login atau pindah ke Register
+            // Buat instance jendela Login dan tampilkan langsung
+            // LoginView akan handle pembukaan window berikutnya (CustomerView atau MainWindow)
             LoginView loginWindow = new LoginView();
-
-            // Tampilkan jendela Login sebagai dialog (modal)
-            bool? loginResult = loginWindow.ShowDialog();
-
-            // Jika login berhasil, buka MainWindow
-            if (loginResult == true)
-            {
-                // Jika login berhasil, buat dan tampilkan MainWindow
-                MainWindow mainWindow = new MainWindow();
-                mainWindow.Show();
-            }
-            else
-            {
-                // Jika login dibatalkan atau ditutup, matikan aplikasi
-                Application.Current.Shutdown();
-            }
+            loginWindow.Show();
+            
+            // Set shutdown mode agar aplikasi tidak tertutup ketika LoginView ditutup
+            // Aplikasi akan tetap berjalan selama ada window yang terbuka
+            Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
         }
     }
 }

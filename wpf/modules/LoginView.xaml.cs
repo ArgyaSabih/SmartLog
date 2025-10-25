@@ -25,17 +25,42 @@ namespace wpf.modules
 
         private void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
-            string username = txtEmail.Text;
+            string email = txtEmail.Text;
             string password = txtPassword.Password;
 
-            if (username == "admin" && password == "password123")
+            // Validasi input
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Login Berhasil!");
-                this.DialogResult = true;
+                MessageBox.Show("Email dan password harus diisi!", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Auto-detect role berdasarkan kredensial
+            // TODO: Implement proper authentication with database
+            
+            // Cek apakah login sebagai Customer
+            if (email == "customer" && password == "customer123")
+            {
+                MessageBox.Show("Login Customer Berhasil!", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                
+                // Buka CustomerView
+                CustomerView customerView = new CustomerView();
+                customerView.Show();
+                this.Close();
+            }
+            // Cek apakah login sebagai Admin
+            else if (email == "admin" && password == "admin123")
+            {
+                MessageBox.Show("Login Admin Berhasil!", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                
+                // Buka AdminView (Admin Dashboard)
+                AdminView adminView = new AdminView();
+                adminView.Show();
+                this.Close();
             }
             else
             {
-                MessageBox.Show("Email atau password salah.");
+                MessageBox.Show("Email atau password salah.", "Login Gagal", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -48,16 +73,10 @@ namespace wpf.modules
 
         private void CreateAccount_Click(object sender, RoutedEventArgs e)
         {
-            // Buka jendela Register
+            // Buka jendela Register dan tutup LoginView
             RegisterView registerWindow = new RegisterView();
-            bool? result = registerWindow.ShowDialog();
-            
-            // Jika registrasi berhasil, bisa ditambahkan logika tambahan di sini
-            if (result == true)
-            {
-                MessageBox.Show("Registrasi berhasil! Silakan login dengan akun baru Anda.", 
-                              "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            registerWindow.Show();
+            this.Close();
         }
         
         // Membuat window bisa di-drag

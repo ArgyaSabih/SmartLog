@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         Title="Register" Height="700" Width="650"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None" AllowsTransparency="True"
-        Background="Transparent">
+        Background="#F5F5F5">
 
     <Window.Resources>
         
@@ -142,13 +141,7 @@
                             </Canvas>
                         </Viewbox>
                         
-                        <TextBlock Text="Registrasikan Dirimu!"
-                                   Foreground="White" FontSize="28" FontWeight="Bold"
-                                   HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                        
-                        <TextBlock Text="Selamat Datang di SmartLogistic!"
-                                   Foreground="#B0C9D2" FontSize="14"
-                                   HorizontalAlignment="Center"/>
+
                     </StackPanel>
                 </Border>
 
@@ -156,13 +149,27 @@
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
                         
-                        <TextBlock Text="Silahkan mengisi data diri anda!"
-                                   FontSize="14" Foreground="#666666"
-                                   HorizontalAlignment="Center" Margin="0,0,0,20"
-                                   TextAlignment="Center"/>
-
-                        <Separator Margin="0,0,0,20" Background="LightGray"/>
-
+                        <TextBlock Text="Registrasikan Dirimu!"
+                                   Foreground="#000000" FontSize="28" FontWeight="Bold"
+                                   HorizontalAlignment="Center" Margin="0,0,0,0"/>
+                        <TextBlock Text="Selamat Datang di SmartLogistic!"
+                                   Foreground="#666666" FontSize="14"
+                                   HorizontalAlignment="Center"/>
+                        
+                        <Grid Margin="0,40,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" BorderBrush="LightGray" BorderThickness="0,0,0,1" 
+                                    VerticalAlignment="Center" Height="1"/>
+                            <TextBlock Grid.Column="1" Text="Silahkan Mengisi Data Diri Anda" 
+                                    Foreground="Gray" Margin="10,0"/>
+                            <Border Grid.Column="2" BorderBrush="LightGray" BorderThickness="0,0,0,1" 
+                                    VerticalAlignment="Center" Height="1"/>
+                        </Grid>
+                        
                         <!-- Row 1: Nama & Username -->
                         <Grid Margin="0,0,0,15">
                             <Grid.ColumnDefinitions>

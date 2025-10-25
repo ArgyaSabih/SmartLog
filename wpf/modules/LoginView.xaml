@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         Title="Login" Height="600" Width="900"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None" AllowsTransparency="True"
-        Background="Transparent">
+        Background="#F5F5F5">
 
     <Window.Resources>
         
@@ -150,12 +149,10 @@
                                    VerticalAlignment="Center" Margin="10,0,0,0"/>
                     </StackPanel>
 
-                    <TextBlock Text="Log in to Your Account:"
+                    <TextBlock Text="Login"
                                FontSize="24" FontWeight="Bold"/>
-                    <TextBlock Text="Welcome! Select method to log in:"
-                               FontSize="14" Foreground="Gray" Margin="0,5,0,0"/>
 
-                    <Grid Margin="0,25,0,25">
+                    <Grid Margin="0,30,0,25">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
@@ -163,7 +160,7 @@
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0" BorderBrush="LightGray" BorderThickness="0,0,0,1" 
                                 VerticalAlignment="Center" Height="1"/>
-                        <TextBlock Grid.Column="1" Text="continue with email" 
+                        <TextBlock Grid.Column="1" Text="Masuk dengan email" 
                                    Foreground="Gray" Margin="10,0"/>
                         <Border Grid.Column="2" BorderBrush="LightGray" BorderThickness="0,0,0,1" 
                                 VerticalAlignment="Center" Height="1"/>
@@ -203,17 +200,19 @@
                     </Border>
                     
                     <TextBlock HorizontalAlignment="Right" Margin="0,15,0,0">
-                        <Run Text="Don't have an account?" Foreground="Gray"/>
+                        <Run Text="Tidak memiliki akun?" Foreground="Gray"/>
                         <Hyperlink Click="CreateAccount_Click" TextDecorations="None">
-                            <Run Text="Create an account" FontWeight="Bold" Foreground="#1F4959"/>
+                            <Run Text="Buat akun" FontWeight="Bold" Foreground="#1F4959"/>
                         </Hyperlink>
                     </TextBlock>
                     
                     <Button x:Name="btnLogin" 
-                            Content="Log in" 
+                            Content="Login" 
                             Margin="0,20,0,0"
                             Style="{StaticResource LoginButtonStyle}"
-                            Click="BtnLogin_Click"/>
+                            Click="BtnLogin_Click"
+                            Height="40"/>
+                           
                     
                     <Button x:Name="btnCancel" IsCancel="True" Click="BtnCancel_Click" 
                             Visibility="Collapsed"/>

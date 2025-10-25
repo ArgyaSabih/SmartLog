@@ -49,33 +49,35 @@ namespace wpf.modules
                 return;
             }
 
+            // Default role adalah Customer (karena radio button sudah dihapus)
+            string role = "Customer";
+
             // Proses registrasi (implementasi sesuai kebutuhan)
-            MessageBox.Show($"Registrasi berhasil!\n\nNama: {nama}\nUsername: {username}\nEmail: {email}", 
+            MessageBox.Show($"Registrasi {role} berhasil!\n\nNama: {nama}\nUsername: {username}\nEmail: {email}\n\nSilakan login dengan akun baru Anda.", 
                           "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
             
-            // Set DialogResult ke true dan tutup window
-            this.DialogResult = true;
+            // TODO: Simpan data ke database
+            
+            // Kembali ke LoginView
+            LoginView loginWindow = new LoginView();
+            loginWindow.Show();
+            this.Close();
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
+            // Kembali ke LoginView
+            LoginView loginWindow = new LoginView();
+            loginWindow.Show();
+            this.Close();
         }
 
         private void GoToLogin_Click(object sender, RoutedEventArgs e)
         {
-            // Tutup jendela Register dan buka Login
-            this.Close();
-            
+            // Kembali ke LoginView
             LoginView loginWindow = new LoginView();
-            bool? result = loginWindow.ShowDialog();
-            
-            // Jika login berhasil, buka MainWindow
-            if (result == true)
-            {
-                MainWindow mainWindow = new MainWindow();
-                mainWindow.Show();
-            }
+            loginWindow.Show();
+            this.Close();
         }
         
         // --- METODE BANTUAN ---
