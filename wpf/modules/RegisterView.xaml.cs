@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
@@ -49,35 +50,66 @@ namespace wpf.modules
                 return;
             }
 
-            // Default role adalah Customer (karena radio button sudah dihapus)
-            string role = "Customer";
+            try
+            {
+                // DEMONSTRASI OOP: Menggunakan Customer class dengan ENCAPSULATION
+                // ENCAPSULATION: Validation otomatis di property setter
+                var newCustomer = new wpf.models.Customer
+                {
+                    CustomerId = DateTime.Now.Ticks // Generate ID sederhana
+                };
 
-            // Proses registrasi (implementasi sesuai kebutuhan)
-            MessageBox.Show($"Registrasi {role} berhasil!\n\nNama: {nama}\nUsername: {username}\nEmail: {email}\n\nSilakan login dengan akun baru Anda.", 
-                          "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
-            
-            // TODO: Simpan data ke database
-            
-            // Kembali ke LoginView
-            LoginView loginWindow = new LoginView();
-            loginWindow.Show();
-            this.Close();
+                // POLYMORPHISM: Method Overloading - Register dengan 5 parameter
+                newCustomer.Register(email, password, nama, alamat, telepon);
+
+                // POLYMORPHISM: GetUserInfo() menampilkan info sesuai tipe class
+                string userInfo = newCustomer.GetUserInfo();
+
+                // Proses registrasi berhasil
+                MessageBox.Show($"Registrasi Customer berhasil!\n\n{userInfo}\n\nSilakan login dengan akun baru Anda.", 
+                              "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                
+                // TODO: Simpan data ke database
+                
+                // Kembali ke LoginView dengan Dispatcher
+                this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    LoginView loginWindow = new LoginView();
+                    loginWindow.Show();
+                    this.Close();
+                }), System.Windows.Threading.DispatcherPriority.Background);
+            }
+            catch (ArgumentException ex)
+            {
+                // ENCAPSULATION: Tangkap error dari validation
+                MessageBox.Show($"Registrasi gagal: {ex.Message}", "Error Validasi", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Terjadi kesalahan: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
-            // Kembali ke LoginView
-            LoginView loginWindow = new LoginView();
-            loginWindow.Show();
-            this.Close();
+            // Kembali ke LoginView dengan Dispatcher
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                LoginView loginWindow = new LoginView();
+                loginWindow.Show();
+                this.Close();
+            }), System.Windows.Threading.DispatcherPriority.Background);
         }
 
         private void GoToLogin_Click(object sender, RoutedEventArgs e)
         {
-            // Kembali ke LoginView
-            LoginView loginWindow = new LoginView();
-            loginWindow.Show();
-            this.Close();
+            // Kembali ke LoginView dengan Dispatcher
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                LoginView loginWindow = new LoginView();
+                loginWindow.Show();
+                this.Close();
+            }), System.Windows.Threading.DispatcherPriority.Background);
         }
         
         // --- METODE BANTUAN ---

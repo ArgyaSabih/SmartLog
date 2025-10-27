@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Input; // Diperlukan untuk MouseLeftButtonDown
 using System.Windows.Controls;
@@ -35,28 +36,62 @@ namespace wpf.modules
                 return;
             }
 
-            // Auto-detect role berdasarkan kredensial
-            // TODO: Implement proper authentication with database
+            // DEMONSTRASI OOP: Menggunakan Polymorphism untuk login
+            // Admin dan Customer punya method Login() yang sama tapi behavior berbeda
             
             // Cek apakah login sebagai Customer
-            if (email == "customer" && password == "customer123")
+            if (email == "customer@gmail.com" && password == "customer123")
             {
-                MessageBox.Show("Login Customer Berhasil!", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                // POLYMORPHISM: Customer.Login() memanggil override method
+                var customer = new wpf.models.Customer 
+                { 
+                    CustomerId = 1, 
+                    Nama = "Demo Customer"
+                };
+                customer.Register(email, password, "Demo Customer", "Jl. Demo No. 1", "08123456789");
                 
-                // Buka CustomerView
-                CustomerView customerView = new CustomerView();
-                customerView.Show();
-                this.Close();
+                bool loginSuccess = customer.Login(email, password);
+                if (loginSuccess)
+                {
+                    MessageBox.Show($"Login Customer Berhasil!\n\n{customer.GetUserInfo()}", 
+                                  "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+                    // Buka CustomerView
+                    CustomerView customerView = new CustomerView();
+                    customerView.Show();
+                    
+                    // Tutup LoginView
+                    this.Close();
+                    return;
+                }
             }
             // Cek apakah login sebagai Admin
-            else if (email == "admin" && password == "admin123")
+            else if (email == "admin@gmail.com" && password == "admin123")
             {
-                MessageBox.Show("Login Admin Berhasil!", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                // POLYMORPHISM: Admin.Login() memanggil override method dengan verification check
+                var admin = new wpf.models.Admin 
+                { 
+                    AdminId = 1, 
+                    Nama = "Demo Admin",
+                    Role = "Super Admin"
+                };
+                admin.Register(email, password, "Demo Admin", "Super Admin");
+                admin.VerifyAdmin("System"); // Admin harus verified dulu
                 
-                // Buka AdminView (Admin Dashboard)
-                AdminView adminView = new AdminView();
-                adminView.Show();
-                this.Close();
+                bool loginSuccess = admin.Login(email, password);
+                if (loginSuccess)
+                {
+                    MessageBox.Show($"Login Admin Berhasil!\n\n{admin.GetUserInfo()}", 
+                                  "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+                    // Buka AdminView
+                    AdminView adminView = new AdminView();
+                    adminView.Show();
+                    
+                    // Tutup LoginView
+                    this.Close();
+                    return;
+                }
             }
             else
             {
@@ -73,10 +108,13 @@ namespace wpf.modules
 
         private void CreateAccount_Click(object sender, RoutedEventArgs e)
         {
-            // Buka jendela Register dan tutup LoginView
-            RegisterView registerWindow = new RegisterView();
-            registerWindow.Show();
-            this.Close();
+            // Buka jendela Register dengan Dispatcher
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                RegisterView registerWindow = new RegisterView();
+                registerWindow.Show();
+                this.Close();
+            }), System.Windows.Threading.DispatcherPriority.Background);
         }
         
         // Membuat window bisa di-drag
