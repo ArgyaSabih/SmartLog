@@ -15,17 +15,79 @@ namespace wpf.modules
         public AdminView()
         {
             InitializeComponent();
-            
             // Set ItemsSource untuk DataGrid
             CustomerList.ItemsSource = Customers;
             KapalList.ItemsSource = Kapals;
-            
-            // Initialize dengan data dummy
-            LoadCustomerData();
-            LoadKapalData();
+
+            // Load data from database
+            LoadDataFromDbAsync();
         }
 
-        // Load data customer (dummy data untuk saat ini)
+        // Load data customer (from DB)
+        private async void LoadDataFromDbAsync()
+        {
+            try
+            {
+                var db = App.GetService<wpf.services.PostgresService>();
+
+                // Try to get current admin email from Application properties
+                string? adminEmail = Application.Current.Properties.Contains("CurrentUserEmail") ? Application.Current.Properties["CurrentUserEmail"] as string : null;
+                if (!string.IsNullOrEmpty(adminEmail))
+                {
+                    txtUserEmail.Text = adminEmail;
+                    var admins = await db.GetAllAdminsAsync();
+                    var current = admins.FirstOrDefault(a => a.Email == adminEmail);
+                    if (current != null)
+                    {
+                        txtUserName.Text = current.Nama ?? "Admin";
+                    }
+                }
+
+                // Load real customers
+                Customers.Clear();
+                var customers = await db.GetAllCustomersAsync();
+                foreach (var c in customers)
+                {
+                    Customers.Add(new CustomerData
+                    {
+                        Username = c.Nama ?? string.Empty,
+                        Email = c.Email ?? string.Empty,
+                        CustomerId = c.CustomerId.ToString(),
+                        Address = c.Alamat ?? string.Empty,
+                        Phone = c.NomorTelepon ?? string.Empty,
+                        Date = DateTime.Now // no created date in model, use now or mapping if exists
+                    });
+                }
+
+                // Load kapals
+                Kapals.Clear();
+                var kapals = await db.GetAllKapalsAsync();
+                foreach (var k in kapals)
+                {
+                    Kapals.Add(new KapalData
+                    {
+                        NamaKapal = k.NamaKapal ?? string.Empty,
+                        IdKapal = k.KapalId.ToString(),
+                        NomorRegistrasi = k.NomorRegistrasi.ToString(),
+                        Kapasitas = k.KapasitasTon.ToString() + " Ton",
+                        Tujuan = k.LokasiSekarang ?? string.Empty
+                    });
+                }
+
+                // Update totals
+                txtTotal.Text = Customers.Count.ToString();
+                txtTotalKapal.Text = Kapals.Count.ToString();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Gagal memuat data dari database: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Fallback to dummy data
+                LoadCustomerData();
+                LoadKapalData();
+            }
+        }
+
+        // Preserve old dummy loaders as fallback
         private void LoadCustomerData()
         {
             Customers.Clear();

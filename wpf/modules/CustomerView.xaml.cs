@@ -16,31 +16,149 @@ namespace wpf.modules
             
             // Initialize data
             DaftarPengiriman = new ObservableCollection<PengirimanItem>();
-            LoadDummyData();
-            
+
             // Bind data ke ItemsControl
             itemsControlPengiriman.ItemsSource = DaftarPengiriman;
-            
-            // Set nama user (bisa diambil dari session/parameter)
-            txtUserNameHeader.Text = "SmartLog";
-            txtUserEmail.Text = "smartlog@gmail.com";
+
+            // Load from DB
+            LoadCustomerDataFromDbAsync();
         }
 
+        private async void LoadCustomerDataFromDbAsync()
+        {
+            try
+            {
+                var db = App.GetService<wpf.services.PostgresService>();
+
+                // Get current user id (customer)
+                long? customerId = Application.Current.Properties.Contains("CurrentUserId") ? Application.Current.Properties["CurrentUserId"] as long? : null;
+                
+                // If we have customer id, fetch pengirimans for that customer
+                if (customerId.HasValue)
+                {
+                    var pengirimans = await db.GetPengirimansByCustomerIdAsync(customerId.Value);
+                    DaftarPengiriman.Clear();
+                    foreach (var p in pengirimans)
+                    {
+                        DaftarPengiriman.Add(new PengirimanItem
+                        {
+                            NamaBarang = p.NamaBarang ?? string.Empty,
+                            IdBarang = p.PengirimanId.ToString(),
+                            Berat = p.BeratKg.ToString() + " Kg",
+                            NamaKapal = "", // mapping can be added if needed
+                            TanggalDibuat = p.TanggalMulai.ToString("dd MMM yyyy"),
+                            Status = p.StatusPengiriman ?? "",
+                            StatusColor = "#90EE90",
+                            Estimasi = p.TanggalSelesaiEstimasi.ToString("dd MMM yyyy"),
+                            Detail = "View"
+                        });
+                    }
+
+                    // Set header info
+                    var cust = await db.GetCustomerByIdAsync(customerId.Value);
+                    if (cust != null)
+                    {
+                        txtUserNameHeader.Text = cust.Nama ?? "Customer";
+                        txtUserEmail.Text = cust.Email ?? string.Empty;
+                    }
+                }
+                else
+                {
+                    // fallback to dummy data if no session
+                    LoadDummyData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Gagal memuat data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                LoadDummyData();
+            }
+
+            // Fallback: load local dummy data set
+            LoadDummyData();
+        }
+
+        // Event Handlers
+        private void BtnLogout_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Apakah Anda yakin ingin logout?", 
+                                        "Konfirmasi Logout", 
+                                        MessageBoxButton.YesNo, 
+                                        MessageBoxImage.Question);
+            
+            if (result == MessageBoxResult.Yes)
+            {
+                // Kembali ke LoginView
+                LoginView loginView = new LoginView();
+                loginView.Show();
+                this.Close();
+            }
+        }
+
+        private void BtnBuatPesanan_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Fitur Buat Pesanan akan segera hadir!", 
+                          "Info", 
+                          MessageBoxButton.OK, 
+                          MessageBoxImage.Information);
+            
+            // TODO: Implement form untuk membuat pesanan baru
+        }
+
+        private void BtnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            // Reload data
+            DaftarPengiriman.Clear();
+            LoadDummyData();
+            
+            MessageBox.Show("Data berhasil di-refresh!", 
+                          "Info", 
+                          MessageBoxButton.OK, 
+                          MessageBoxImage.Information);
+        }
+
+        private void BtnDetailPengiriman_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag != null)
+            {
+                string? idBarang = button.Tag.ToString();
+                if (!string.IsNullOrEmpty(idBarang))
+                {
+                    MessageBox.Show($"Detail pengiriman untuk ID: {idBarang}\n\nFitur detail akan segera hadir!", 
+                                  "Detail Pengiriman", 
+                                  MessageBoxButton.OK, 
+                                  MessageBoxImage.Information);
+                }
+                
+                // TODO: Implement halaman detail pengiriman
+            }
+        }
+
+        private void BtnPrevious_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Halaman Previous", "Pagination", MessageBoxButton.OK, MessageBoxImage.Information);
+            // TODO: Implement pagination logic
+        }
+
+        private void BtnNext_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Halaman Next", "Pagination", MessageBoxButton.OK, MessageBoxImage.Information);
+            // TODO: Implement pagination logic
+        }
+
+        private void BtnFilter_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Fitur Filter akan segera hadir!", 
+                          "Info", 
+                          MessageBoxButton.OK, 
+                          MessageBoxImage.Information);
+            // TODO: Implement filter functionality
+        }
+
+        // Local dummy data loader (used as fallback or for demo)
         private void LoadDummyData()
         {
-            // Data dummy sesuai dengan gambar
-            DaftarPengiriman.Add(new PengirimanItem
-            {
-                NamaBarang = "Borax Semenko",
-                IdBarang = "#nuul29b23e",
-                Berat = "15 Ton",
-                NamaKapal = "Nusantara Jaya",
-                TanggalDibuat = "15 Jul 2025",
-                Status = "Selesai",
-                StatusColor = "#90EE90",
-                Estimasi = "20 Jul 2025",
-                Detail = "View"
-            });
+            DaftarPengiriman.Clear();
 
             DaftarPengiriman.Add(new PengirimanItem
             {
@@ -158,83 +276,6 @@ namespace wpf.modules
                 Estimasi = "04 Mar 2025",
                 Detail = "View"
             });
-        }
-
-        // Event Handlers
-        private void BtnLogout_Click(object sender, RoutedEventArgs e)
-        {
-            var result = MessageBox.Show("Apakah Anda yakin ingin logout?", 
-                                        "Konfirmasi Logout", 
-                                        MessageBoxButton.YesNo, 
-                                        MessageBoxImage.Question);
-            
-            if (result == MessageBoxResult.Yes)
-            {
-                // Kembali ke LoginView
-                LoginView loginView = new LoginView();
-                loginView.Show();
-                this.Close();
-            }
-        }
-
-        private void BtnBuatPesanan_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Fitur Buat Pesanan akan segera hadir!", 
-                          "Info", 
-                          MessageBoxButton.OK, 
-                          MessageBoxImage.Information);
-            
-            // TODO: Implement form untuk membuat pesanan baru
-        }
-
-        private void BtnRefresh_Click(object sender, RoutedEventArgs e)
-        {
-            // Reload data
-            DaftarPengiriman.Clear();
-            LoadDummyData();
-            
-            MessageBox.Show("Data berhasil di-refresh!", 
-                          "Info", 
-                          MessageBoxButton.OK, 
-                          MessageBoxImage.Information);
-        }
-
-        private void BtnDetailPengiriman_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && button.Tag != null)
-            {
-                string? idBarang = button.Tag.ToString();
-                if (!string.IsNullOrEmpty(idBarang))
-                {
-                    MessageBox.Show($"Detail pengiriman untuk ID: {idBarang}\n\nFitur detail akan segera hadir!", 
-                                  "Detail Pengiriman", 
-                                  MessageBoxButton.OK, 
-                                  MessageBoxImage.Information);
-                }
-                
-                // TODO: Implement halaman detail pengiriman
-            }
-        }
-
-        private void BtnPrevious_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Halaman Previous", "Pagination", MessageBoxButton.OK, MessageBoxImage.Information);
-            // TODO: Implement pagination logic
-        }
-
-        private void BtnNext_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Halaman Next", "Pagination", MessageBoxButton.OK, MessageBoxImage.Information);
-            // TODO: Implement pagination logic
-        }
-
-        private void BtnFilter_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Fitur Filter akan segera hadir!", 
-                          "Info", 
-                          MessageBoxButton.OK, 
-                          MessageBoxImage.Information);
-            // TODO: Implement filter functionality
         }
     }
 

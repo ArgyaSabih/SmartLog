@@ -9,13 +9,18 @@ namespace wpf.modules
 {
     public partial class LoginView : Window
     {
+        private readonly wpf.services.PostgresService _dbService;
+
         public LoginView()
         {
             InitializeComponent();
-            
+
+            // Ambil service dari DI container
+            _dbService = App.GetService<wpf.services.PostgresService>();
+
             // Tambahkan event handler ini agar window bisa di-drag
             this.MouseLeftButtonDown += OnMouseLeftButtonDown;
-            
+
             // Trik untuk watermark PasswordBox
             txtPassword.GotFocus += TxtPassword_GotFocus;
             txtPassword.LostFocus += TxtPassword_LostFocus;
@@ -24,7 +29,7 @@ namespace wpf.modules
 
         // --- METODE UNTUK TOMBOL ---
 
-        private void BtnLogin_Click(object sender, RoutedEventArgs e)
+        private async void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
             string email = txtEmail.Text;
             string password = txtPassword.Password;
@@ -39,63 +44,46 @@ namespace wpf.modules
             // DEMONSTRASI OOP: Menggunakan Polymorphism untuk login
             // Admin dan Customer punya method Login() yang sama tapi behavior berbeda
             
-            // Cek apakah login sebagai Customer
-            if (email == "customer@gmail.com" && password == "customer123")
+            try
             {
-                // POLYMORPHISM: Customer.Login() memanggil override method
-                var customer = new wpf.models.Customer 
-                { 
-                    CustomerId = 1, 
-                    Nama = "Demo Customer"
-                };
-                customer.Register(email, password, "Demo Customer", "Jl. Demo No. 1", "08123456789");
-                
-                bool loginSuccess = customer.Login(email, password);
-                if (loginSuccess)
+                // Coba login sebagai Customer
+                var customer = await _dbService.LoginCustomerAsync(email, password);
+                if (customer != null)
                 {
-                    MessageBox.Show($"Login Customer Berhasil!\n\n{customer.GetUserInfo()}", 
-                                  "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
-                    
+                    MessageBox.Show($"Login Customer Berhasil!\n\n{customer.GetUserInfo()}", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Simpan session sederhana ke Application.Properties
+                    Application.Current.Properties["CurrentUserRole"] = "Customer";
+                    Application.Current.Properties["CurrentUserEmail"] = customer.Email;
+                    Application.Current.Properties["CurrentUserId"] = customer.CustomerId;
+
                     // Buka CustomerView
-                    CustomerView customerView = new CustomerView();
+                    var customerView = new CustomerView();
                     customerView.Show();
-                    
-                    // Tutup LoginView
                     this.Close();
                     return;
                 }
-            }
-            // Cek apakah login sebagai Admin
-            else if (email == "admin@gmail.com" && password == "admin123")
-            {
-                // POLYMORPHISM: Admin.Login() memanggil override method dengan verification check
-                var admin = new wpf.models.Admin 
-                { 
-                    AdminId = 1, 
-                    Nama = "Demo Admin",
-                    Role = "Super Admin"
-                };
-                admin.Register(email, password, "Demo Admin", "Super Admin");
-                admin.VerifyAdmin("System"); // Admin harus verified dulu
-                
-                bool loginSuccess = admin.Login(email, password);
-                if (loginSuccess)
+
+                // Coba login sebagai Admin
+                var admin = await _dbService.LoginAdminAsync(email, password);
+                if (admin != null)
                 {
-                    MessageBox.Show($"Login Admin Berhasil!\n\n{admin.GetUserInfo()}", 
-                                  "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
-                    
-                    // Buka AdminView
-                    AdminView adminView = new AdminView();
+                    MessageBox.Show($"Login Admin Berhasil!\n\n{admin.GetUserInfo()}", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Simpan session sederhana ke Application.Properties
+                    Application.Current.Properties["CurrentUserRole"] = "Admin";
+                    Application.Current.Properties["CurrentUserEmail"] = admin.Email;
+                    Application.Current.Properties["CurrentUserId"] = admin.AdminId;
+
+                    var adminView = new AdminView();
                     adminView.Show();
-                    
-                    // Tutup LoginView
                     this.Close();
                     return;
                 }
-            }
-            else
-            {
+
                 MessageBox.Show("Email atau password salah.", "Login Gagal", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Terjadi kesalahan saat login: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

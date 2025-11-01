@@ -7,13 +7,18 @@ namespace wpf.modules
 {
     public partial class RegisterView : Window
     {
+        private readonly wpf.services.PostgresService _dbService;
+
         public RegisterView()
         {
             InitializeComponent();
-            
+
+            // Ambil service postgres dari DI
+            _dbService = App.GetService<wpf.services.PostgresService>();
+
             // Tambahkan event handler agar window bisa di-drag
             this.MouseLeftButtonDown += OnMouseLeftButtonDown;
-            
+
             // Trik untuk watermark PasswordBox
             txtPassword.GotFocus += TxtPassword_GotFocus;
             txtPassword.LostFocus += TxtPassword_LostFocus;
@@ -22,7 +27,7 @@ namespace wpf.modules
 
         // --- METODE UNTUK TOMBOL ---
 
-        private void BtnRegistrasi_Click(object sender, RoutedEventArgs e)
+    private async void BtnRegistrasi_Click(object sender, RoutedEventArgs e)
         {
             string nama = txtNama.Text;
             string username = txtUsername.Text;
@@ -54,30 +59,36 @@ namespace wpf.modules
             {
                 // DEMONSTRASI OOP: Menggunakan Customer class dengan ENCAPSULATION
                 // ENCAPSULATION: Validation otomatis di property setter
-                var newCustomer = new wpf.models.Customer
-                {
-                    CustomerId = DateTime.Now.Ticks // Generate ID sederhana
-                };
+                var newCustomer = new wpf.models.Customer();
 
-                // POLYMORPHISM: Method Overloading - Register dengan 5 parameter
+                // Set data dan hash password via Register method
                 newCustomer.Register(email, password, nama, alamat, telepon);
 
-                // POLYMORPHISM: GetUserInfo() menampilkan info sesuai tipe class
-                string userInfo = newCustomer.GetUserInfo();
-
-                // Proses registrasi berhasil
-                MessageBox.Show($"Registrasi Customer berhasil!\n\n{userInfo}\n\nSilakan login dengan akun baru Anda.", 
-                              "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
-                
-                // TODO: Simpan data ke database
-                
-                // Kembali ke LoginView dengan Dispatcher
-                this.Dispatcher.BeginInvoke(new Action(() =>
+                try
                 {
-                    LoginView loginWindow = new LoginView();
-                    loginWindow.Show();
-                    this.Close();
-                }), System.Windows.Threading.DispatcherPriority.Background);
+                    // Simpan ke database
+                    var added = await _dbService.AddCustomerAsync(newCustomer);
+
+                    MessageBox.Show($"Registrasi Customer berhasil!\n\n{added.GetUserInfo()}\n\nSilakan login dengan akun baru Anda.", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Kembali ke LoginView (await the dispatcher invocation so we don't fire-and-forget)
+                    await this.Dispatcher.InvokeAsync(() =>
+                    {
+                        // Resolve LoginView from DI container so dependencies are injected
+                        var loginWindow = App.GetService<LoginView>();
+                        loginWindow.Show();
+                        this.Close();
+                    }, System.Windows.Threading.DispatcherPriority.Background);
+                }
+                catch (Microsoft.EntityFrameworkCore.DbUpdateException dbex)
+                {
+                    // Kemungkinan duplicate email atau constraint violation
+                    MessageBox.Show($"Registrasi gagal: {dbex.InnerException?.Message ?? dbex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Terjadi kesalahan saat registrasi: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (ArgumentException ex)
             {
@@ -90,26 +101,26 @@ namespace wpf.modules
             }
         }
 
-        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        private async void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
-            // Kembali ke LoginView dengan Dispatcher
-            this.Dispatcher.BeginInvoke(new Action(() =>
+            // Kembali ke LoginView dengan Dispatcher (await to avoid fire-and-forget)
+            await this.Dispatcher.InvokeAsync(() =>
             {
-                LoginView loginWindow = new LoginView();
+                var loginWindow = App.GetService<LoginView>();
                 loginWindow.Show();
                 this.Close();
-            }), System.Windows.Threading.DispatcherPriority.Background);
+            }, System.Windows.Threading.DispatcherPriority.Background);
         }
 
-        private void GoToLogin_Click(object sender, RoutedEventArgs e)
+        private async void GoToLogin_Click(object sender, RoutedEventArgs e)
         {
-            // Kembali ke LoginView dengan Dispatcher
-            this.Dispatcher.BeginInvoke(new Action(() =>
+            // Kembali ke LoginView dengan Dispatcher (await to avoid fire-and-forget)
+            await this.Dispatcher.InvokeAsync(() =>
             {
-                LoginView loginWindow = new LoginView();
+                var loginWindow = App.GetService<LoginView>();
                 loginWindow.Show();
                 this.Close();
-            }), System.Windows.Threading.DispatcherPriority.Background);
+            }, System.Windows.Threading.DispatcherPriority.Background);
         }
         
         // --- METODE BANTUAN ---
