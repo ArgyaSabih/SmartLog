@@ -66,7 +66,8 @@ public class AppDbContext : DbContext
             entity.Property(e => e.NomorRegistrasi).HasColumnName("nomor_registrasi");
             entity.Property(e => e.KapasitasTon).HasColumnName("kapasitas_ton").HasPrecision(18, 2);
             entity.Property(e => e.StatusVerifikasi).HasColumnName("status_verifikasi").HasMaxLength(50);
-            entity.Property(e => e.LokasiSekarang).HasColumnName("lokasi_sekarang").HasMaxLength(255);
+                entity.Property(e => e.LokasiSekarang).HasColumnName("lokasi_sekarang").HasMaxLength(255);
+                entity.Property(e => e.LokasiTujuan).HasColumnName("lokasi_tujuan").HasMaxLength(255);
             
             entity.HasIndex(e => e.NomorRegistrasi).IsUnique();
         });

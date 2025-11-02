@@ -1,6 +1,11 @@
 using System;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using wpf.models;
+using System.Globalization;
 
 namespace wpf.modules
 {
@@ -70,7 +75,8 @@ namespace wpf.modules
                         IdKapal = k.KapalId.ToString(),
                         NomorRegistrasi = k.NomorRegistrasi.ToString(),
                         Kapasitas = k.KapasitasTon.ToString() + " Ton",
-                        Tujuan = k.LokasiSekarang ?? string.Empty
+                        Tujuan = k.LokasiTujuan ?? string.Empty,
+                        LokasiSekarang = k.LokasiSekarang ?? string.Empty
                     });
                 }
 
@@ -339,15 +345,89 @@ namespace wpf.modules
         // Event handler untuk ketika kapal dipilih (single click)
         private void KapalList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            // Ignore selection changes caused by clicking buttons inside the row
+            if (IsMouseOverButton()) return;
+
             if (KapalList.SelectedItem is KapalData selectedKapal)
             {
                 // Buka KapalDetailView (pindah page, bukan popup)
                 KapalDetailView detailView = new KapalDetailView(selectedKapal, this);
                 detailView.Show();
-                
+
                 // Tutup AdminView
                 this.Close();
             }
+        }
+
+        // Helper: check if current mouse target is within a Button (to avoid opening detail when pressing action buttons)
+        private bool IsMouseOverButton()
+        {
+            var dep = Mouse.DirectlyOver as DependencyObject;
+            while (dep != null)
+            {
+                if (dep is System.Windows.Controls.Button) return true;
+                dep = VisualTreeHelper.GetParent(dep);
+            }
+            return false;
+        }
+
+        // Event handler for chevron/detail button in kapal row
+        private void BtnOpenKapalDetail_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement fe && fe.DataContext is KapalData kapal)
+            {
+                KapalDetailView detailView = new KapalDetailView(kapal, this);
+                detailView.Show();
+                this.Close();
+            }
+        }
+
+        // Event handler untuk menghapus kapal dari list dan database
+        private async void BtnDeleteKapal_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!(sender is FrameworkElement fe) || !(fe.DataContext is KapalData kapalData))
+                    return;
+
+                // Konfirmasi
+                var result = MessageBox.Show($"Hapus kapal '{kapalData.NamaKapal}'?", "Konfirmasi Hapus", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result != MessageBoxResult.Yes) return;
+
+                if (!long.TryParse(kapalData.IdKapal, out long kapalId))
+                {
+                    MessageBox.Show("ID kapal tidak valid.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var db = App.GetService<wpf.services.PostgresService>();
+                bool deleted = await db.DeleteKapalAsync(kapalId);
+                if (deleted)
+                {
+                    // Remove from UI collection
+                    Kapals.Remove(kapalData);
+                    txtTotalKapal.Text = Kapals.Count.ToString();
+                    MessageBox.Show("Kapal berhasil dihapus.", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Kapal tidak ditemukan atau gagal dihapus.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Gagal menghapus kapal: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Event handler untuk membuka dialog penambahan kapal baru
+        private void BtnAddKapal_Click(object sender, RoutedEventArgs e)
+        {
+            // Open the KapalCreateView as dialog and pass this AdminView as owner/parent
+            var create = new KapalCreateView(this);
+            create.Owner = this;
+            create.ShowDialog();
+            // The create dialog will update the Kapals collection on success
         }
 
         // Public method untuk switch ke tab Kapal (dipanggil dari KapalDetailView)
@@ -382,5 +462,6 @@ namespace wpf.modules
         public string NomorRegistrasi { get; set; } = string.Empty;
         public string Kapasitas { get; set; } = string.Empty;
         public string Tujuan { get; set; } = string.Empty;
+        public string LokasiSekarang { get; set; } = string.Empty;
     }
 }

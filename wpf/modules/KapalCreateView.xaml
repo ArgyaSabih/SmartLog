@@ -1,0 +1,56 @@
+<Window x:Class="wpf.modules.KapalCreateView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Tambah Kapal" Height="360" Width="560" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Background="White">
+
+    <Border Padding="20" Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Tambah Kapal" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+            <StackPanel Grid.Row="1" Orientation="Vertical" VerticalAlignment="Top" Margin="0,4,0,0">
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                    <TextBlock Text="Nama Kapal" Width="120" VerticalAlignment="Center"/>
+                    <TextBox x:Name="txtNama" Width="380" Height="28" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                    <TextBlock Text="Nomor Registrasi" Width="120" VerticalAlignment="Center"/>
+                    <TextBox x:Name="txtNomor" Width="180" Height="28" />
+                    <TextBlock Text="Kapasitas (Ton)" Width="120" VerticalAlignment="Center" Margin="12,0,0,0"/>
+                    <TextBox x:Name="txtKapasitas" Width="80" Height="28" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                    <TextBlock Text="Tujuan" Width="120" VerticalAlignment="Center"/>
+                    <TextBox x:Name="txtTujuan" Width="380" Height="28" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                    <TextBlock Text="Lokasi Saat Ini" Width="120" VerticalAlignment="Center"/>
+                    <TextBox x:Name="txtLokasiSekarang" Width="380" Height="28" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                    <TextBlock Text="Status" Width="120" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="cmbStatus" Width="200" SelectedIndex="0">
+                        <ComboBoxItem>Pending</ComboBoxItem>
+                        <ComboBoxItem>Verified</ComboBoxItem>
+                        <ComboBoxItem>Rejected</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+                <Button x:Name="btnCancel" Content="Batal" Width="100" Height="32" Margin="0,0,8,0" Click="BtnCancel_Click"/>
+                <!-- Avoid referencing AdminView-only StaticResource to prevent XAML parse errors -->
+                <Button x:Name="btnSave" Content="Simpan" Width="120" Height="32" Click="BtnSave_Click" Background="#1F4959" Foreground="White" FontWeight="SemiBold"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

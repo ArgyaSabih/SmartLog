@@ -186,23 +186,30 @@
 
                         <!-- Left: Kapal Info -->
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Jakarta - Surabaya" 
-                                       FontSize="14" Foreground="#666666" Margin="0,0,0,10"/>
-                            <TextBlock x:Name="txtKapalName" Text="Nusantara Jaya" 
-                                       FontSize="32" FontWeight="Bold" 
-                                       Foreground="#2C3E50" Margin="0,0,0,10"/>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <!-- Destination / tujuan shown above the name -->
+                                <TextBlock x:Name="txtTujuan" Text="Surabaya" 
+                                           FontSize="14" Foreground="#666666"/>
+                            <!-- Ship name with status badge -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,6,0,10">
+                                <TextBlock x:Name="txtKapalName" Text="Nusantara Jaya" 
+                                           FontSize="32" FontWeight="Bold" 
+                                           Foreground="#2C3E50"/>
+                                <Border x:Name="statusBadge" Background="#FFF4C2" CornerRadius="8" Margin="12,0,0,0" Padding="10,4" VerticalAlignment="Center">
+                                    <TextBlock x:Name="txtStatusBadge" Text="Pending" FontWeight="SemiBold" FontSize="12" Foreground="#8A6D00"/>
+                                </Border>
+                            </StackPanel>
+                            <!-- Current location shown below the name -->
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,20">
                                 <TextBlock Text="📍" FontSize="16" Margin="0,0,5,0"/>
-                                <TextBlock x:Name="txtCoordinates" Text="37°25'19.07''N, 122°05'06.24''E" 
+                                <TextBlock x:Name="txtLokasiSekarang" Text="Pelabuhan Tanjung Priok" 
                                            FontSize="14" Foreground="#666666"/>
                             </StackPanel>
-
                             <StackPanel Orientation="Horizontal">
-                                <Button Content="Detail Lokasi" 
-                                        Style="{StaticResource PrimaryButton}"
-                                        Margin="0,0,15,0"/>
-                                <Button Content="Update Lokasi" 
-                                        Style="{StaticResource SecondaryButton}"/>
+                <Button x:Name="btnDetailLokasi" Content="Detail Lokasi" 
+                    Style="{StaticResource PrimaryButton}"
+                    Margin="0,0,15,0" Click="BtnDetailLokasi_Click"/>
+                <Button x:Name="btnUpdateLokasi" Content="Update Lokasi" 
+                    Style="{StaticResource SecondaryButton}" Click="BtnUpdateLokasi_Click"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -253,21 +260,25 @@
                                     </StackPanel>
                                 </Grid>
 
-                                <Button Content="Lihat Kapasitas" 
-                                        Background="White" Foreground="#5C8BA8"
-                                        BorderThickness="0" Padding="15,8"
-                                        FontSize="13" FontWeight="SemiBold"
-                                        Cursor="Hand" HorizontalAlignment="Stretch">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="{TemplateBinding Background}"
-                                                    CornerRadius="8"
-                                                    Padding="{TemplateBinding Padding}">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
+                <!-- Verify button: toggle kapal verification status -->
+                                <!-- Single button that opens a popup for status selection -->
+                                <Button x:Name="btnSetStatus" Content="Ubah Status" Style="{StaticResource PrimaryButton}" Margin="0,10,0,0" Click="BtnSetStatus_Click"/>
+
+                                <Popup x:Name="popupStatus" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PlacementTarget="{Binding ElementName=btnSetStatus}" PopupAnimation="Slide">
+                                    <Border Background="White" CornerRadius="6" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1" Width="220">
+                                        <StackPanel>
+                                            <ComboBox x:Name="cmbStatus" Width="180" Height="36" Margin="0,0,0,10">
+                                                <ComboBoxItem>Pending</ComboBoxItem>
+                                                <ComboBoxItem>Verified</ComboBoxItem>
+                                                <ComboBoxItem>Rejected</ComboBoxItem>
+                                            </ComboBox>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Content="Batal" Width="70" Margin="0,0,10,0" Click="BtnCancelStatus_Click"/>
+                                                <Button x:Name="btnApplyStatus" Content="Simpan" Width="70" Click="BtnApplyStatus_Click"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </Popup>
                             </StackPanel>
                         </Border>
                     </Grid>

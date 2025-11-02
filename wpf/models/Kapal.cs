@@ -48,6 +48,9 @@ public class Kapal
         private set => _lokasiSekarang = value;
     }
 
+    // Destination / intended tujuan
+    public string? LokasiTujuan { get; set; }
+
     public Kapal()
     {
         StatusVerifikasi = "Pending";

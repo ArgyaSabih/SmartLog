@@ -205,10 +205,12 @@
 
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <!-- Form row for adding kapal -->
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
                         <!-- Customer Table -->
                         <Grid x:Name="CustomerContent" Grid.Row="0" Grid.RowSpan="3">
@@ -223,7 +225,6 @@
                                 <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">
                                     <Run Text="Total: " FontSize="14" Foreground="#666666"/>
                                     <Run x:Name="txtTotal" Text="10" FontSize="14" FontWeight="Bold" Foreground="#2C5F8D"/>
-                                    <Run Text="/500" FontSize="14" Foreground="#666666"/>
                                 </TextBlock>
                             </Grid>
 
@@ -290,44 +291,7 @@
                                     <DataGridTextColumn Header="Telepon" Binding="{Binding Phone}" Width="1.2*"/>
                                     <DataGridTextColumn Header="Tanggal" Binding="{Binding Date, StringFormat=dd MMM yyyy}" Width="1*"/>
                                     
-                                    <DataGridTemplateColumn Header="Verifikasi" Width="1*">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                    <Button Background="#4CAF50" BorderThickness="0" 
-                                                            Width="30" Height="30" Margin="5,0"
-                                                            Cursor="Hand" ToolTip="Verify">
-                                                        <Button.Template>
-                                                            <ControlTemplate>
-                                                                <Border Background="{TemplateBinding Background}" 
-                                                                        CornerRadius="6">
-                                                                    <TextBlock Text="✓" Foreground="White" 
-                                                                               FontSize="16" FontWeight="Bold"
-                                                                               HorizontalAlignment="Center" 
-                                                                               VerticalAlignment="Center"/>
-                                                                </Border>
-                                                            </ControlTemplate>
-                                                        </Button.Template>
-                                                    </Button>
-                                                    <Button Background="#F44336" BorderThickness="0" 
-                                                            Width="30" Height="30" Margin="5,0"
-                                                            Cursor="Hand" ToolTip="Delete">
-                                                        <Button.Template>
-                                                            <ControlTemplate>
-                                                                <Border Background="{TemplateBinding Background}" 
-                                                                        CornerRadius="6">
-                                                                    <TextBlock Text="✕" Foreground="White" 
-                                                                               FontSize="16" FontWeight="Bold"
-                                                                               HorizontalAlignment="Center" 
-                                                                               VerticalAlignment="Center"/>
-                                                                </Border>
-                                                            </ControlTemplate>
-                                                        </Button.Template>
-                                                    </Button>
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
+                                    <!-- Customer does not require verification column; removed -->
                                 </DataGrid.Columns>
                             </DataGrid>
 
@@ -359,13 +323,19 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <!-- Table Header with Total -->
-                            <Grid Grid.Row="0" Margin="0,0,0,20">
-                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <!-- Table Header with Total and Add button -->
+                            <Grid Grid.Row="0" Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center">
                                     <Run Text="Total: " FontSize="14" Foreground="#666666"/>
                                     <Run x:Name="txtTotalKapal" Text="10" FontSize="14" FontWeight="Bold" Foreground="#2C5F8D"/>
-                                    <Run Text="/500" FontSize="14" Foreground="#666666"/>
                                 </TextBlock>
+
+                                <Button Grid.Column="1" x:Name="btnOpenAddKapal" Content="Tambah Kapal" Click="BtnAddKapal_Click" Style="{StaticResource ActionButtonStyle}" Height="32" Width="140" HorizontalAlignment="Right"/>
                             </Grid>
 
                             <!-- Kapal List -->
@@ -426,34 +396,22 @@
                                 </DataGrid.CellStyle>
 
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nama Kapal ◊" Binding="{Binding NamaKapal}" Width="1.5*"/>
-                                    <DataGridTextColumn Header="ID Kapal ◊" Binding="{Binding IdKapal}" Width="1*"/>
+                                    <DataGridTextColumn Header="Nama Kapal ◊" Binding="{Binding NamaKapal}" Width="1.2*"/>
+                                    <DataGridTextColumn Header="Lokasi Saat Ini" Binding="{Binding LokasiSekarang}" Width="1.2*"/>
+                                    <DataGridTextColumn Header="ID Kapal ◊" Binding="{Binding IdKapal}" Width="0.8*"/>
                                     <DataGridTextColumn Header="Nomor Registrasi ◊" Binding="{Binding NomorRegistrasi}" Width="1.5*"/>
                                     <DataGridTextColumn Header="Kapasitas ◊" Binding="{Binding Kapasitas}" Width="1*"/>
                                     <DataGridTextColumn Header="Tujuan ◊" Binding="{Binding Tujuan}" Width="1.2*"/>
                                     
-                                    <DataGridTemplateColumn Header="Verifikasi ◊" Width="1*">
+                                    <DataGridTemplateColumn Header="Aksi" Width="1*">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                    <Button Background="#4CAF50" BorderThickness="0" 
-                                                            Width="30" Height="30" Margin="5,0"
-                                                            Cursor="Hand" ToolTip="Verify">
-                                                        <Button.Template>
-                                                            <ControlTemplate>
-                                                                <Border Background="{TemplateBinding Background}" 
-                                                                        CornerRadius="6">
-                                                                    <TextBlock Text="✓" Foreground="White" 
-                                                                               FontSize="16" FontWeight="Bold"
-                                                                               HorizontalAlignment="Center" 
-                                                                               VerticalAlignment="Center"/>
-                                                                </Border>
-                                                            </ControlTemplate>
-                                                        </Button.Template>
-                                                    </Button>
+                                                    <!-- Delete -->
                                                     <Button Background="#F44336" BorderThickness="0" 
                                                             Width="30" Height="30" Margin="5,0"
-                                                            Cursor="Hand" ToolTip="Delete">
+                                                            Cursor="Hand" ToolTip="Delete"
+                                                            Click="BtnDeleteKapal_Click">
                                                         <Button.Template>
                                                             <ControlTemplate>
                                                                 <Border Background="{TemplateBinding Background}" 
@@ -466,6 +424,21 @@
                                                             </ControlTemplate>
                                                         </Button.Template>
                                                     </Button>
+                                                    
+                                                    <!-- Open detail (chevron/right arrow) -->
+                                                    <Button Background="#E3F2FD" BorderThickness="0"
+                                                            Width="30" Height="30" Margin="5,0"
+                                                            Cursor="Hand" ToolTip="Lihat Detail"
+                                                            Click="BtnOpenKapalDetail_Click">
+                                                        <Button.Template>
+                                                            <ControlTemplate>
+                                                                <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                                                                    <TextBlock Text="›" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+
                                                 </StackPanel>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
