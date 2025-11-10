@@ -20,10 +20,9 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                    <TextBlock Text="Nomor Registrasi" Width="120" VerticalAlignment="Center"/>
-                    <TextBox x:Name="txtNomor" Width="180" Height="28" />
-                    <TextBlock Text="Kapasitas (Ton)" Width="120" VerticalAlignment="Center" Margin="12,0,0,0"/>
-                    <TextBox x:Name="txtKapasitas" Width="80" Height="28" />
+                    <!-- Nomor Registrasi di-generate otomatis; tidak ditampilkan pada form -->
+                    <TextBlock Text="Kapasitas (Ton)" Width="120" VerticalAlignment="Center"/>
+                    <TextBox x:Name="txtKapasitas" Width="180" Height="28" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,4,0,0">

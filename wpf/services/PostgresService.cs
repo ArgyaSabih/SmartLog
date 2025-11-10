@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using wpf.Data;
 using wpf.models;
+using Npgsql;
 
 namespace wpf.services;
 
@@ -15,6 +16,71 @@ public class PostgresService
     public PostgresService(AppDbContext db)
     {
         _db = db;
+    }
+
+    // Extension: robust add with retry on unique constraint for kode_registrasi
+    /// <summary>
+    /// Tries to add a Kapal, generating/supplying KodeRegistrasi each attempt via generator function.
+    /// If the DB rejects due to unique constraint on kode_registrasi, it retries up to maxAttempts.
+    /// </summary>
+    public async Task<Kapal> AddKapalWithRetriesAsync(Kapal kapal, Func<string> kodeGenerator, int maxAttempts = 5)
+    {
+        if (kapal == null) throw new ArgumentNullException(nameof(kapal));
+        if (kodeGenerator == null) throw new ArgumentNullException(nameof(kodeGenerator));
+
+        for (int attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            kapal.KodeRegistrasi = kodeGenerator();
+            try
+            {
+                _db.Kapals.Add(kapal);
+                await _db.SaveChangesAsync();
+                return kapal;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                // Detect Postgres unique violation (SQLSTATE 23505)
+                var pgEx = dbEx.InnerException as PostgresException;
+                if (pgEx != null && pgEx.SqlState == "23505")
+                {
+                    // Likely unique constraint violation. If last attempt, rethrow.
+                    // Detach the entity so we can retry with a fresh one.
+                    try
+                    {
+                        var entry = _db.Entry(kapal);
+                        if (entry != null)
+                        {
+                            entry.State = EntityState.Detached;
+                        }
+                    }
+                    catch { }
+
+                    if (attempt == maxAttempts)
+                    {
+                        // rethrow original exception for caller to handle
+                        throw;
+                    }
+
+                    // otherwise continue to next attempt with new kode
+                    kapal = new Kapal
+                    {
+                        NamaKapal = kapal.NamaKapal,
+                        KapasitasTon = kapal.KapasitasTon,
+                        StatusVerifikasi = kapal.StatusVerifikasi,
+                        LokasiTujuan = kapal.LokasiTujuan,
+                        // keep numeric NomorRegistrasi fallback unique-ish
+                        NomorRegistrasi = kapal.NomorRegistrasi
+                    };
+                    continue;
+                }
+
+                // Not a unique constraint or unknown provider, rethrow
+                throw;
+            }
+        }
+
+        // Should not reach here
+        throw new InvalidOperationException("Failed to add kapal after retries.");
     }
 
     #region Admin Operations
@@ -155,6 +221,23 @@ public class PostgresService
     public async Task<Kapal?> GetKapalByIdAsync(long kapalId)
     {
         return await _db.Kapals.FindAsync(kapalId);
+    }
+
+    /// <summary>
+    /// Mendapatkan kapal berdasarkan nomor registrasi (integer representation)
+    /// </summary>
+    public async Task<Kapal?> GetKapalByNomorRegistrasiAsync(int nomorRegistrasi)
+    {
+        return await _db.Kapals.FirstOrDefaultAsync(k => k.NomorRegistrasi == nomorRegistrasi);
+    }
+
+    /// <summary>
+    /// Mendapatkan kapal berdasarkan kode registrasi string (contoh: REG-ABCDE)
+    /// </summary>
+    public async Task<Kapal?> GetKapalByKodeRegistrasiAsync(string kodeRegistrasi)
+    {
+        if (string.IsNullOrWhiteSpace(kodeRegistrasi)) return null;
+        return await _db.Kapals.FirstOrDefaultAsync(k => k.KodeRegistrasi == kodeRegistrasi);
     }
 
     /// <summary>

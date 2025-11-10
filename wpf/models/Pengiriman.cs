@@ -26,7 +26,7 @@ public class Pengiriman
         private set
         {
             _statusPengiriman = value;
-            _lastUpdated = DateTime.Now;
+            _lastUpdated = DateTime.UtcNow;
         }
     }
 
@@ -57,8 +57,9 @@ public class Pengiriman
     public Pengiriman()
     {
         _statusPengiriman = "Pending";
-        TanggalMulai = DateTime.Now;
-        _lastUpdated = DateTime.Now;
+        // Use UTC for database storage (Postgres timestamptz expects UTC)
+        TanggalMulai = DateTime.UtcNow;
+        _lastUpdated = DateTime.UtcNow;
     }
 
     // ENCAPSULATION: Public method dengan validation untuk update status
@@ -67,8 +68,8 @@ public class Pengiriman
         if (string.IsNullOrWhiteSpace(newStatus))
             throw new ArgumentException("Status tidak boleh kosong");
 
-        string[] validStatuses = { "Pending", "Diproses", "Dalam Perjalanan", "Tiba di Pelabuhan", "Selesai", "Dibatalkan" };
-        
+        string[] validStatuses = { "Pending", "Diproses", "Dalam Perjalanan", "Tiba di Pelabuhan", "Selesai", "Dibatalkan", "Proses" };
+
         if (!Array.Exists(validStatuses, s => s.Equals(newStatus, StringComparison.OrdinalIgnoreCase)))
         {
             throw new ArgumentException($"Status '{newStatus}' tidak valid");
@@ -85,7 +86,7 @@ public class Pengiriman
             throw new ArgumentException("Lokasi tidak boleh kosong");
 
         LokasiSaatIni = newLocation;
-        _lastUpdated = DateTime.Now;
+        _lastUpdated = DateTime.UtcNow;
         Console.WriteLine($"Lokasi pengiriman {PengirimanId} diperbarui ke: {newLocation}");
     }
 
@@ -94,15 +95,15 @@ public class Pengiriman
     {
         // Biaya per kg untuk pengiriman standar
         decimal biayaPerKg = 10000;
-        
+
         // Hitung durasi pengiriman
         int hariPengiriman = (TanggalSelesaiEstimasi - TanggalMulai).Days;
-        
+
         // Biaya tambahan berdasarkan durasi
         decimal biayaTambahan = hariPengiriman * 5000;
-        
+
         decimal totalCost = (BeratKg * biayaPerKg) + biayaTambahan;
-        
+
         return totalCost;
     }
 
@@ -146,8 +147,9 @@ public class Pengiriman
 
     public string GetEstimasiWaktuTiba()
     {
-        TimeSpan sisaWaktu = TanggalSelesaiEstimasi - DateTime.Now;
-        
+        // Compare using UTC to match stored timestamps
+        TimeSpan sisaWaktu = TanggalSelesaiEstimasi - DateTime.UtcNow;
+
         if (sisaWaktu.TotalDays < 0)
             return "Pengiriman terlambat!";
         else if (sisaWaktu.TotalHours < 24)

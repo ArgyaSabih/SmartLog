@@ -17,6 +17,8 @@ public class Kapal
     public long KapalId { get; set; }
     public string? NamaKapal { get; set; }
     public int NomorRegistrasi { get; set; }
+    // New: human-readable registration code (e.g. REG-ABCDE)
+    public string? KodeRegistrasi { get; set; }
 
     // ENCAPSULATION: Property dengan validation
     public decimal KapasitasTon
@@ -56,6 +58,8 @@ public class Kapal
         StatusVerifikasi = "Pending";
         _lokasiSekarang = "Pelabuhan";
     }
+
+    // Note: KodeRegistrasi is stored separately and should be unique. Use DB migration to add column.
 
     // ENCAPSULATION: Public method untuk update lokasi dengan validation
     public void UpdateLokasi(string lokasiBaru)

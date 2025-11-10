@@ -240,25 +240,23 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="150"/>
-                                    <ColumnDefinition Width="120"/>
                                     <ColumnDefinition Width="100"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="150"/>
                                     <ColumnDefinition Width="120"/>
-                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="120"/>
                                     <ColumnDefinition Width="100"/>
                                     <ColumnDefinition Width="80"/>
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0" Text="Nama Barang ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="1" Text="ID Barang ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="2" Text="Berat ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="3" Text="Kapal ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="4" Text="Dibuat ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="5" Text="Status ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="6" Text="Estimasi ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="7" Text="Detail ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="8" Text="" FontWeight="SemiBold" FontSize="13"/>
+                                <TextBlock Grid.Column="1" Text="Berat ▼" FontWeight="SemiBold" FontSize="13"/>
+                                <TextBlock Grid.Column="2" Text="Kapal ▼" FontWeight="SemiBold" FontSize="13"/>
+                                <TextBlock Grid.Column="3" Text="Dibuat ▼" FontWeight="SemiBold" FontSize="13"/>
+                                <TextBlock Grid.Column="4" Text="Status ▼" FontWeight="SemiBold" FontSize="13"/>
+                                <TextBlock Grid.Column="5" Text="Estimasi ▼" FontWeight="SemiBold" FontSize="13"/>
+                                <TextBlock Grid.Column="6" Text="Detail ▼" FontWeight="SemiBold" FontSize="13"/>
+                                <TextBlock Grid.Column="7" Text="" FontWeight="SemiBold" FontSize="13"/>
                             </Grid>
                         </Border>
 
@@ -271,47 +269,43 @@
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="150"/>
-                                                    <ColumnDefinition Width="120"/>
                                                     <ColumnDefinition Width="100"/>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="150"/>
                                                     <ColumnDefinition Width="120"/>
-                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="120"/>
                                                     <ColumnDefinition Width="100"/>
                                                     <ColumnDefinition Width="80"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <TextBlock Grid.Column="0" Text="{Binding NamaBarang}" 
-                                                           FontSize="13" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="1" Text="{Binding IdBarang}" 
-                                                           FontSize="13" Foreground="#1F4959" FontWeight="SemiBold"
-                                                           VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="2" Text="{Binding Berat}" 
-                                                           FontSize="13" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="3" Text="{Binding NamaKapal}" 
-                                                           FontSize="13" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="4" Text="{Binding TanggalDibuat}" 
-                                                           FontSize="13" VerticalAlignment="Center"/>
-                                                
-                                                <!-- Status Badge -->
-                                                <Border Grid.Column="5" Style="{StaticResource StatusBadgeStyle}"
-                                                        Background="{Binding StatusColor}">
-                                                    <TextBlock Text="{Binding Status}" FontSize="11" 
-                                                               FontWeight="SemiBold" Foreground="White"/>
-                                                </Border>
+                                                                    <TextBlock Grid.Column="0" Text="{Binding NamaBarang}" 
+                                                                               FontSize="13" VerticalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="1" Text="{Binding Berat}" 
+                                                                               FontSize="13" VerticalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="2" Text="{Binding NamaKapal}" 
+                                                                               FontSize="13" VerticalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="3" Text="{Binding TanggalDibuat}" 
+                                                                               FontSize="13" VerticalAlignment="Center"/>
 
-                                                <TextBlock Grid.Column="6" Text="{Binding Estimasi}" 
-                                                           FontSize="13" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="7" Text="{Binding Detail}" 
-                                                           FontSize="13" VerticalAlignment="Center"/>
+                                                                    <!-- Status Badge -->
+                                                                    <Border Grid.Column="4" Style="{StaticResource StatusBadgeStyle}"
+                                                                            Background="{Binding StatusColor}">
+                                                                        <TextBlock Text="{Binding Status}" FontSize="11" 
+                                                                                   FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+
+                                                                    <TextBlock Grid.Column="5" Text="{Binding Estimasi}" 
+                                                                               FontSize="13" VerticalAlignment="Center"/>
+                                                                    <TextBlock Grid.Column="6" Text="{Binding Detail}" 
+                                                                               FontSize="13" VerticalAlignment="Center"/>
                                                 
-                                                <!-- Detail Button -->
-                                                <Button Grid.Column="8" Content="📋" 
-                                                        Background="Transparent" BorderThickness="0"
-                                                        FontSize="16" Cursor="Hand"
-                                                        ToolTip="Lihat Detail"
-                                                        Click="BtnDetailPengiriman_Click"
-                                                        Tag="{Binding IdBarang}"/>
+                                                                    <!-- Detail Button -->
+                                                                    <Button Grid.Column="7" Content="📋" 
+                                                                            Background="Transparent" BorderThickness="0"
+                                                                            FontSize="16" Cursor="Hand"
+                                                                            ToolTip="Lihat Detail"
+                                                                            Click="BtnDetailPengiriman_Click"
+                                                                            Tag="{Binding IdBarang}"/>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>

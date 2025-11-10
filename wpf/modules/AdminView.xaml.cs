@@ -73,7 +73,8 @@ namespace wpf.modules
                     {
                         NamaKapal = k.NamaKapal ?? string.Empty,
                         IdKapal = k.KapalId.ToString(),
-                        NomorRegistrasi = k.NomorRegistrasi.ToString(),
+                        // prefer string kode_registrasi if available
+                        NomorRegistrasi = k.KodeRegistrasi ?? k.NomorRegistrasi.ToString(),
                         Kapasitas = k.KapasitasTon.ToString() + " Ton",
                         Tujuan = k.LokasiTujuan ?? string.Empty,
                         LokasiSekarang = k.LokasiSekarang ?? string.Empty

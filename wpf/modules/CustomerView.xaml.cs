@@ -40,16 +40,53 @@ namespace wpf.modules
                     DaftarPengiriman.Clear();
                     foreach (var p in pengirimans)
                     {
+                        // Determine display ID: try to read generated code from DeskripsiBarang
+                        string displayId;
+                        if (!string.IsNullOrEmpty(p.DeskripsiBarang))
+                        {
+                            // DeskripsiBarang may contain code|detail when saved by AddExportView
+                            var parts = p.DeskripsiBarang.Split('|');
+                            var code = parts.Length > 0 ? parts[0] : p.DeskripsiBarang;
+                            displayId = code.StartsWith("#") ? code : "#" + code;
+                        }
+                        else
+                        {
+                            displayId = p.PengirimanId.ToString();
+                        }
+
+                        // Try to resolve kapal name if possible
+                        string kapalName = string.Empty;
+                        try
+                        {
+                            if (p.KapalId != 0)
+                            {
+                                var kapal = await db.GetKapalByIdAsync(p.KapalId);
+                                kapalName = kapal != null ? kapal.NamaKapal ?? string.Empty : string.Empty;
+                            }
+                        }
+                        catch { kapalName = string.Empty; }
+
+                        // Map status to color (basic)
+                        string status = p.StatusPengiriman ?? string.Empty;
+                        string statusColor = "#90EE90"; // default green
+                        if (status.Equals("Proses", StringComparison.OrdinalIgnoreCase) || status.Equals("Diproses", StringComparison.OrdinalIgnoreCase))
+                            statusColor = "#FFD700"; // gold
+                        else if (status.Equals("Ditunda", StringComparison.OrdinalIgnoreCase))
+                            statusColor = "#FFA07A"; // light salmon
+                        else if (status.Equals("Selesai", StringComparison.OrdinalIgnoreCase))
+                            statusColor = "#90EE90"; // green
+
                         DaftarPengiriman.Add(new PengirimanItem
                         {
                             NamaBarang = p.NamaBarang ?? string.Empty,
-                            IdBarang = p.PengirimanId.ToString(),
+                            IdBarang = displayId,
                             Berat = p.BeratKg.ToString() + " Kg",
-                            NamaKapal = "", // mapping can be added if needed
-                            TanggalDibuat = p.TanggalMulai.ToString("dd MMM yyyy"),
-                            Status = p.StatusPengiriman ?? "",
-                            StatusColor = "#90EE90",
-                            Estimasi = p.TanggalSelesaiEstimasi.ToString("dd MMM yyyy"),
+                            NamaKapal = kapalName,
+                            // Convert stored UTC to local time for display
+                            TanggalDibuat = p.TanggalMulai.ToLocalTime().ToString("dd MMM yyyy"),
+                            Status = status,
+                            StatusColor = statusColor,
+                            Estimasi = p.TanggalSelesaiEstimasi.ToLocalTime().ToString("dd MMM yyyy"),
                             Detail = "View"
                         });
                     }
@@ -74,8 +111,6 @@ namespace wpf.modules
                 LoadDummyData();
             }
 
-            // Fallback: load local dummy data set
-            LoadDummyData();
         }
 
         // Event Handlers
@@ -97,24 +132,33 @@ namespace wpf.modules
 
         private void BtnBuatPesanan_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Fitur Buat Pesanan akan segera hadir!", 
-                          "Info", 
-                          MessageBoxButton.OK, 
-                          MessageBoxImage.Information);
-            
-            // TODO: Implement form untuk membuat pesanan baru
+            // Open AddExport dialog and refresh data on success
+            try
+            {
+                var dialog = new AddExportView();
+                dialog.Owner = this;
+                var result = dialog.ShowDialog();
+                if (result == true)
+                {
+                    // Refresh from DB to show newly added pengiriman
+                    DaftarPengiriman.Clear();
+                    LoadCustomerDataFromDbAsync();
+                    MessageBox.Show("Pengiriman berhasil ditambahkan.", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Gagal membuka form tambah pengiriman: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void BtnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            // Reload data
+            // Reload data from DB (or fallback dummy)
             DaftarPengiriman.Clear();
-            LoadDummyData();
-            
-            MessageBox.Show("Data berhasil di-refresh!", 
-                          "Info", 
-                          MessageBoxButton.OK, 
-                          MessageBoxImage.Information);
+            LoadCustomerDataFromDbAsync();
+
+            MessageBox.Show("Data berhasil di-refresh!", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void BtnDetailPengiriman_Click(object sender, RoutedEventArgs e)

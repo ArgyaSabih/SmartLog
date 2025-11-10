@@ -26,36 +26,39 @@ namespace wpf.modules
             try
             {
                 string nama = txtNama.Text?.Trim() ?? string.Empty;
-                string nomorStr = txtNomor.Text?.Trim() ?? string.Empty;
                 string kapasitasStr = txtKapasitas.Text?.Trim() ?? string.Empty;
                 string tujuan = txtTujuan.Text?.Trim() ?? string.Empty;
                 string lokasiSekarang = txtLokasiSekarang.Text?.Trim() ?? string.Empty;
                 string status = (cmbStatus.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Pending";
-
-                if (string.IsNullOrWhiteSpace(nama) || string.IsNullOrWhiteSpace(nomorStr) || string.IsNullOrWhiteSpace(kapasitasStr))
+                if (string.IsNullOrWhiteSpace(nama) || string.IsNullOrWhiteSpace(kapasitasStr))
                 {
                     MessageBox.Show("Mohon isi Nama Kapal, Nomor Registrasi, dan Kapasitas.", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
+                // Generate REG-XXXXX (5 uppercase letters) and ensure uniqueness in DB (kode_registrasi column).
+                var db = App.GetService<wpf.services.PostgresService>();
 
-                if (!int.TryParse(nomorStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out int nomorRegistrasi))
+                // generator function for REG-XXXXX
+                var rnd = new Random();
+                string Generator()
                 {
-                    MessageBox.Show("Nomor Registrasi harus berupa angka (integer).", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    char[] arr = new char[5];
+                    for (int i = 0; i < 5; i++) arr[i] = (char)('A' + rnd.Next(0, 26));
+                    return "REG-" + new string(arr);
                 }
-
                 if (!decimal.TryParse(kapasitasStr, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal kapasitasTon))
                 {
                     MessageBox.Show("Kapasitas harus berupa angka (contoh: 2500 atau 2500.5).", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                var db = App.GetService<wpf.services.PostgresService>();
+                // db already obtained above for uniqueness check
 
                 var kapal = new Kapal
                 {
                     NamaKapal = nama,
-                    NomorRegistrasi = nomorRegistrasi,
+                    // keep numeric column for compatibility, set to a timestamp-based int fallback
+                    NomorRegistrasi = (int)(Math.Abs(DateTime.UtcNow.Ticks) % int.MaxValue),
                     KapasitasTon = kapasitasTon,
                     StatusVerifikasi = status
                 };
@@ -69,14 +72,16 @@ namespace wpf.modules
                     kapal.UpdateLokasi(lokasiSekarang);
                 }
 
-                var added = await db.AddKapalAsync(kapal);
+                // Use AddKapalWithRetriesAsync which will retry on unique constraint violations
+                var added = await db.AddKapalWithRetriesAsync(kapal, Generator, maxAttempts: 8);
 
                 // update parent UI: show tujuan and current location
                 _parent.Kapals.Add(new KapalData
                 {
                     NamaKapal = added.NamaKapal ?? string.Empty,
                     IdKapal = added.KapalId.ToString(),
-                    NomorRegistrasi = added.NomorRegistrasi.ToString(),
+                    // display as KodeRegistrasi if present, otherwise fallback to numeric
+                    NomorRegistrasi = added.KodeRegistrasi ?? added.NomorRegistrasi.ToString(),
                     Kapasitas = added.KapasitasTon.ToString("G", CultureInfo.InvariantCulture) + " Ton",
                     Tujuan = added.LokasiTujuan ?? string.Empty,
                     LokasiSekarang = added.LokasiSekarang ?? string.Empty
@@ -89,7 +94,7 @@ namespace wpf.modules
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Gagal menambahkan kapal: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Gagal menambahkan kapal: {ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
