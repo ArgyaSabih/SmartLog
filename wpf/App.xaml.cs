@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using System;
+using Npgsql;
 using wpf.Data;
 using wpf.services;
 using wpf.modules;
@@ -22,7 +24,8 @@ namespace wpf
                 {
                     // Load appsettings.json dari working directory
                     config.SetBasePath(Directory.GetCurrentDirectory());
-                    config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                    // Make appsettings.json optional so the app can run using environment variables alone
+                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
                     config.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
                     config.AddEnvironmentVariables();
                 })
@@ -30,11 +33,41 @@ namespace wpf
                 {
                     // Ambil connection string dari configuration
                     var configuration = context.Configuration;
-                    var connectionString = configuration.GetConnectionString("DefaultConnection");
+                    var connectionString = configuration.GetConnectionString("DefaultConnection") ?? string.Empty;
+
+                    // If connection string is provided in URI form (postgres://...), convert it to key/value format
+                    if (connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase) ||
+                        connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            var uri = new Uri(connectionString);
+                            var userInfo = uri.UserInfo.Split(':');
+                            var username = userInfo.Length > 0 ? Uri.UnescapeDataString(userInfo[0]) : string.Empty;
+                            var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : string.Empty;
+
+                            var builder = new NpgsqlConnectionStringBuilder
+                            {
+                                Host = uri.Host,
+                                Port = uri.Port,
+                                Database = uri.AbsolutePath.TrimStart('/'),
+                                Username = username,
+                                Password = password,
+                                SslMode = SslMode.Require
+                            };
+
+                            connectionString = builder.ConnectionString;
+                        }
+                        catch
+                        {
+                            // If parsing fails, keep original string and let Npgsql throw a descriptive error later
+                        }
+                    }
 
                     // Register DbContext dengan PostgreSQL
-                    services.AddDbContext<AppDbContext>(options =>
-                        options.UseNpgsql(connectionString));
+                    // Use DbContext pooling for better performance and set a reasonable command timeout.
+                    services.AddDbContextPool<AppDbContext>(options =>
+                        options.UseNpgsql(connectionString, npgsqlOptions => npgsqlOptions.CommandTimeout(60)));
 
                     // Register Services
                     services.AddScoped<PostgresService>();

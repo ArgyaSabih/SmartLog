@@ -340,9 +340,47 @@ public class PostgresService
     /// </summary>
     public async Task<Pengiriman> AddPengirimanAsync(Pengiriman pengiriman)
     {
-        _db.Pengirimans.Add(pengiriman);
-        await _db.SaveChangesAsync();
-        return pengiriman;
+        if (pengiriman == null) throw new ArgumentNullException(nameof(pengiriman));
+
+        // Ensure kapal exists
+        if (pengiriman.KapalId <= 0)
+            throw new ArgumentException("Pengiriman harus memiliki KapalId yang valid.", nameof(pengiriman));
+
+        // Use a serializable transaction to avoid race conditions when checking capacity
+        using (var tx = await _db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable))
+        {
+            // Reload kapal inside transaction
+            var kapal = await _db.Kapals.FindAsync(pengiriman.KapalId);
+            if (kapal == null)
+                throw new InvalidOperationException($"Kapal dengan ID {pengiriman.KapalId} tidak ditemukan.");
+
+            // Sum existing pengiriman berat (kg) for this kapal
+            decimal existingKg = 0m;
+            try
+            {
+                existingKg = await _db.Pengirimans
+                    .Where(p => p.KapalId == pengiriman.KapalId)
+                    .SumAsync(p => (decimal?)p.BeratKg) ?? 0m;
+            }
+            catch
+            {
+                existingKg = 0m;
+            }
+
+            decimal kapalCapacityKg = kapal.KapasitasTon * 1000m;
+
+            if (existingKg + pengiriman.BeratKg > kapalCapacityKg)
+            {
+                throw new InvalidOperationException($"Kapasitas kapal ({kapal.KapasitasTon} Ton) tidak mencukupi. Kapasitas tersisa: {(kapalCapacityKg - existingKg)} Kg.");
+            }
+
+            // All good, add pengiriman
+            _db.Pengirimans.Add(pengiriman);
+            await _db.SaveChangesAsync();
+
+            await tx.CommitAsync();
+            return pengiriman;
+        }
     }
 
     /// <summary>

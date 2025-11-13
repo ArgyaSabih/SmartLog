@@ -96,22 +96,7 @@
                                Foreground="White" VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <!-- Search Box -->
-                <Border Grid.Column="1" Background="White" CornerRadius="8" 
-                        Padding="15,0" MinWidth="300" HorizontalAlignment="Left" Margin="40,0,0,0"
-                        Height="35">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox x:Name="txtSearch" BorderThickness="0" Background="Transparent"
-                                 VerticalAlignment="Center" FontSize="14" Foreground="#666666"
-                                 Text="Search"/>
-                        <TextBlock Grid.Column="1" Text="🔍" FontSize="16" VerticalAlignment="Center" 
-                                   Foreground="#666666"/>
-                    </Grid>
-                </Border>
+                <!-- Search Box removed as requested -->
 
                 <!-- User Profile Section -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
@@ -182,12 +167,11 @@
                                    Foreground="#3B7D98" Margin="0,5,0,0"/>
                     </StackPanel>
                     
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <Button Content="🔍  Filter" Style="{StaticResource ActionButtonStyle}" MinWidth="80" Height="40"
-                                Background="#3B7D98" Margin="0,0,15,0" Padding="25,30" Click="BtnFilter_Click"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <!-- Filter removed per request -->
                         <Button Content="➕  Add New Export" Style="{StaticResource ActionButtonStyle}" MinWidth="130" Height="40"
-                                Background="#3B7D98" Foreground="White" Padding="25,50" Click="BtnBuatPesanan_Click"/>
-                    </StackPanel>
+                            Background="#3B7D98" Foreground="White" Padding="25,50" Click="BtnBuatPesanan_Click"/>
+                        </StackPanel>
                 </Grid>
             </Border>
 
@@ -198,23 +182,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Search Box -->
-                <Border Grid.Column="0" Background="White" CornerRadius="8" 
-                        BorderBrush="#E0E0E0" BorderThickness="1" Padding="15,10" 
-                        MaxWidth="400" HorizontalAlignment="Left">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="🔍" Grid.Column="0" FontSize="16" 
-                                   VerticalAlignment="Center" Margin="0,0,10,0"/>
-                        <TextBox x:Name="txtSearchOld" Grid.Column="1" 
-                                 BorderThickness="0" Background="Transparent"
-                                 VerticalAlignment="Center" FontSize="14"
-                                 Text="Search"/>
-                    </Grid>
-                </Border>
+                <!-- Collapsed top-bar search removed -->
 
                 <!-- Action Buttons -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">

@@ -9,8 +9,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0">
-            <TextBlock Text="Masukkan lokasi baru:" Margin="0,0,0,6"/>
-            <TextBox x:Name="txtNewLocation" Height="30"/>
+            <TextBlock Text="Pilih lokasi baru:" Margin="0,0,0,6"/>
+            <ComboBox x:Name="cmbLocations" Height="30"/>
         </StackPanel>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">

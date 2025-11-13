@@ -68,7 +68,7 @@ public class Pengiriman
         if (string.IsNullOrWhiteSpace(newStatus))
             throw new ArgumentException("Status tidak boleh kosong");
 
-        string[] validStatuses = { "Pending", "Diproses", "Dalam Perjalanan", "Tiba di Pelabuhan", "Selesai", "Dibatalkan", "Proses" };
+        string[] validStatuses = { "Pending", "Diproses", "Selesai", "Dibatalkan" };
 
         if (!Array.Exists(validStatuses, s => s.Equals(newStatus, StringComparison.OrdinalIgnoreCase)))
         {

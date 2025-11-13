@@ -27,84 +27,7 @@ Pastikan komputer Anda sudah memiliki:
 
 ---
 
-## Instalasi PostgreSQL
-
-### Opsi 1: Installer Manual (Recommended untuk Pemula)
-
-1. **Download PostgreSQL Installer**
-
-   - Kunjungi: https://www.postgresql.org/download/windows/
-   - Download installer sesuai arsitektur Windows Anda (x86/x64)
-
-2. **Instalasi**
-
-   - Jalankan installer yang sudah didownload
-   - Ikuti wizard instalasi:
-     - Pilih komponen: PostgreSQL Server, pgAdmin 4, Command Line Tools
-     - Pilih direktori instalasi (default: `C:\Program Files\PostgreSQL\16\`)
-     - **Penting**: Catat password untuk user `postgres` yang Anda buat
-     - Port default: `5432`
-     - Locale: `Indonesian, Indonesia` atau `English`
-   - Klik "Finish" setelah selesai
-
-3. **Verifikasi Instalasi**
-   ```bash
-   # Buka Command Prompt atau PowerShell
-   psql --version
-   ```
-   Output yang diharapkan: `psql (PostgreSQL) 16.x`
-
-## Setup Database
-
-### Langkah 1: Login ke PostgreSQL
-
-```bash
-# Buka Command Prompt atau PowerShell
-# Login sebagai superuser postgres
-psql -U postgres -h localhost -p 5432
-
-# Masukkan password yang dibuat saat instalasi
-```
-
-### Langkah 2: Buat Database dan User Baru
-
-Jalankan perintah SQL berikut di prompt `psql`:
-
-```sql
--- Buat database smartlog
-CREATE DATABASE smartlog;
-
--- Buat user khusus untuk aplikasi
-CREATE USER smartlog_user WITH PASSWORD 'admin';
-
--- Berikan semua privilege ke user
-GRANT ALL PRIVILEGES ON DATABASE smartlog TO smartlog_user;
-
--- Untuk PostgreSQL 15+, berikan akses ke schema public
-\c smartlog
-GRANT ALL ON SCHEMA public TO smartlog_user;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO smartlog_user;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO smartlog_user;
-
--- Keluar dari psql
-\q
-```
-
-### Langkah 3: Verifikasi Koneksi Database
-
-```bash
-# Test koneksi dengan user baru
-psql -U smartlog_user -h localhost -p 5432 -d smartlog -W
-
-# Masukkan password: SmartLog2024!
-# Jika berhasil, Anda akan masuk ke prompt psql
-
-# Keluar
-\q
-
-```
-
-### Langkah 2: Restore NuGet Packages
+### Langkah 1: Restore NuGet Packages
 
 ```bash
 # Restore semua dependencies
@@ -132,7 +55,7 @@ Buka file `wpf/appsettings.json` dan sesuaikan connection string:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=smartlog;Username=smartlog_user;Password=admin"
+    "DefaultConnection": "Host=aws-1-ap-southeast-1.pooler.supabase.com;Port=5432;Database=postgres;Username=postgres.aktxszoizvolmkrgodtb;Password=TipsenYa123;SSL Mode=Require;Trust Server Certificate=true"
   },
   "Logging": {
     "LogLevel": {
@@ -143,17 +66,6 @@ Buka file `wpf/appsettings.json` dan sesuaikan connection string:
   }
 }
 ```
-
-### Langkah 2: Amankan Credentials (Production)
-
-Untuk production, gunakan **User Secrets** atau **Environment Variables**:
-
-```bash
-# Set connection string via environment variable
-setx CONNECTIONSTRINGS__DEFAULTCONNECTION "Host=localhost;Port=5432;Database=smartlog;Username=smartlog_user;Password=admin"
-```
-
----
 
 ## Migrasi Database
 
@@ -183,31 +95,6 @@ dotnet ef migrations add InitialCreate
 ```bash
 # Apply migration ke database
 dotnet ef database update
-```
-
-### Langkah 4: Verifikasi Tabel di Database
-
-```bash
-# Login ke PostgreSQL
-psql -U smartlog_user -h localhost -d smartlog -W
-
-# List semua tabel
-\dt
-
-# Output yang diharapkan:
-#  Schema |       Name        | Type  |     Owner
-# --------+-------------------+-------+---------------
-#  public | __EFMigrationsHistory | table | smartlog_user
-#  public | admins            | table | smartlog_user
-#  public | customers         | table | smartlog_user
-#  public | kapals            | table | smartlog_user
-#  public | pengirimans       | table | smartlog_user
-
-# Lihat struktur tabel
-\d admins
-
-# Keluar
-\q
 ```
 
 ---

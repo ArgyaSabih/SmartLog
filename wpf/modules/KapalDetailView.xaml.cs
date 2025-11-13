@@ -10,7 +10,7 @@ namespace wpf.modules
 {
     public partial class KapalDetailView : Window
     {
-        public ObservableCollection<BarangData> Barangs { get; set; } = new ObservableCollection<BarangData>();
+    public ObservableCollection<BarangData> Barangs { get; set; } = new ObservableCollection<BarangData>();
     private KapalData _kapalData;
     private AdminView? _parentAdminView;
     private Kapal? _kapalModel;
@@ -28,14 +28,16 @@ namespace wpf.modules
             txtLokasiSekarang.Text = "-";
             txtTujuan.Text = kapal.Tujuan ?? "-";
 
-            // Load full kapal model from DB asynchronously
-            _ = LoadKapalFromDbAsync();
+            // Start async initialization (loads kapal and barang)
+            _ = InitializeAsync();
+        }
 
-            // Set ItemsSource untuk DataGrid
-            BarangList.ItemsSource = Barangs;
-
-            // Load barang data
-            LoadBarangData();
+        private async Task InitializeAsync()
+        {
+            await LoadKapalFromDbAsync();
+            // Ensure ItemsSource is set on UI thread
+            this.Dispatcher.Invoke(() => BarangList.ItemsSource = Barangs);
+            await LoadBarangDataFromDbAsync();
         }
 
         private async Task LoadKapalFromDbAsync()
@@ -55,24 +57,8 @@ namespace wpf.modules
                     txtCapacity.Dispatcher.Invoke(() => txtCapacity.Text = _kapalModel.KapasitasTon.ToString("G"));
                     txtTujuan.Dispatcher.Invoke(() => txtTujuan.Text = _kapalModel.LokasiTujuan ?? "-");
                     txtLokasiSekarang.Dispatcher.Invoke(() => txtLokasiSekarang.Text = _kapalModel.LokasiSekarang ?? "-");
-
-                    // Set verification ComboBox to current status
-                    cmbStatus.Dispatcher.Invoke(() =>
-                    {
-                        var status = _kapalModel.StatusVerifikasi ?? "Pending";
-                        // Try to select matching ComboBoxItem
-                        foreach (var item in cmbStatus.Items)
-                        {
-                            if (item is System.Windows.Controls.ComboBoxItem cbi && string.Equals((cbi.Content as string) ?? string.Empty, status, StringComparison.OrdinalIgnoreCase))
-                            {
-                                cmbStatus.SelectedItem = cbi;
-                                break;
-                            }
-                        }
-                        btnSetStatus.IsEnabled = true;
-                        // Update status badge
-                        UpdateStatusBadge(status);
-                    });
+                    // Update status badge (no in-place status editor)
+                    UpdateStatusBadge(_kapalModel.StatusVerifikasi ?? "Pending");
                 }
             }
             catch { /* ignore and keep existing display */ }
@@ -103,64 +89,77 @@ namespace wpf.modules
             });
         }
 
-        private void LoadBarangData()
+    private async Task LoadBarangDataFromDbAsync()
         {
-            Barangs.Clear();
-
-            // Data dummy untuk barang
-            Barangs.Add(new BarangData
+            try
             {
-                IdBarang = "#BRG001",
-                NamaBarang = "Beras Premium",
-                BeratBarang = "15 Ton",
-                Customer = "Rizky Anto",
-                TanggalMasuk = new DateTime(2025, 9, 12)
-            });
+                var db = App.GetService<wpf.services.PostgresService>();
+                if (_kapalModel == null)
+                {
+                    if (long.TryParse(_kapalData.IdKapal, out long id))
+                    {
+                        _kapalModel = await db.GetKapalByIdAsync(id);
+                    }
+                }
 
-            Barangs.Add(new BarangData
-            {
-                IdBarang = "#BRG002",
-                NamaBarang = "Gula Pasir",
-                BeratBarang = "10 Ton",
-                Customer = "Bunga Sari",
-                TanggalMasuk = new DateTime(2025, 9, 13)
-            });
+                if (_kapalModel == null) return;
 
-            Barangs.Add(new BarangData
-            {
-                IdBarang = "#BRG003",
-                NamaBarang = "Minyak Goreng",
-                BeratBarang = "8 Ton",
-                Customer = "Dwi Pratama",
-                TanggalMasuk = new DateTime(2025, 9, 14)
-            });
+                // Get pengirimans that belong to this kapal
+                var pengirimans = await db.GetPengirimansByKapalIdAsync(_kapalModel.KapalId);
 
-            Barangs.Add(new BarangData
-            {
-                IdBarang = "#BRG004",
-                NamaBarang = "Kopi Robusta",
-                BeratBarang = "12 Ton",
-                Customer = "Andika Hermawan",
-                TanggalMasuk = new DateTime(2025, 9, 15)
-            });
+                // Build local list on worker thread
+                var items = new System.Collections.Generic.List<BarangData>();
+                foreach (var p in pengirimans)
+                {
+                    items.Add(new BarangData
+                    {
+                        IdBarang = $"#P{p.PengirimanId}",
+                        NamaBarang = p.NamaBarang ?? "-",
+                        BeratBarang = FormatBeratKgToDisplay(p.BeratKg),
+                        BeratKgValue = p.BeratKg,
+                        Customer = p.CustomerId.ToString(),
+                        TanggalMasuk = p.TanggalMulai
+                    });
+                }
 
-            Barangs.Add(new BarangData
+                // Update ObservableCollection on UI thread
+                this.Dispatcher.Invoke(() =>
+                {
+                    Barangs.Clear();
+                    foreach (var it in items) Barangs.Add(it);
+                    UpdateCapacityDisplay();
+                });
+            }
+            catch (Exception ex)
             {
-                IdBarang = "#BRG005",
-                NamaBarang = "Teh Hijau",
-                BeratBarang = "20 Ton",
-                Customer = "Lina Utama",
-                TanggalMasuk = new DateTime(2025, 9, 16)
-            });
+                // Keep UI responsive; show simple message
+                MessageBox.Show($"Gagal memuat data barang: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
-            Barangs.Add(new BarangData
+        private string FormatBeratKgToDisplay(decimal beratKg)
+        {
+            // If >= 1000 kg, show in tons with 3 decimal precision
+            if (beratKg >= 1000)
             {
-                IdBarang = "#BRG006",
-                NamaBarang = "Garam Halus",
-                BeratBarang = "18 Ton",
-                Customer = "Johan Setiawan",
-                TanggalMasuk = new DateTime(2025, 9, 17)
-            });
+                decimal ton = Math.Round(beratKg / 1000m, 3);
+                return $"{ton} Ton";
+            }
+            return $"{beratKg} Kg";
+        }
+
+        private void UpdateCapacityDisplay()
+        {
+            if (_kapalModel == null) return;
+            // Sum berat barang in kg
+            decimal totalKg = Barangs.Sum(b => b.BeratKgValue);
+            // kapal kapasitas in ton -> convert to kg
+            decimal kapasitasKg = _kapalModel.KapasitasTon * 1000m;
+            decimal sisaKg = kapasitasKg - totalKg;
+            if (sisaKg < 0) sisaKg = 0;
+            // show in tons with 3 decimals
+            decimal sisaTon = Math.Round(sisaKg / 1000m, 3);
+            txtCapacity.Text = sisaTon.ToString("G");
         }
 
         private void BtnBack_Click(object sender, RoutedEventArgs e)
@@ -250,89 +249,9 @@ namespace wpf.modules
 
         // Removed BtnLihatKapasitas per request
 
-        private void BtnSetStatus_Click(object sender, RoutedEventArgs e)
-        {
-            // Open popup for status selection. Ensure current status is selected in combo.
-            try
-            {
-                var status = _kapalModel?.StatusVerifikasi ?? "Pending";
+        // Status modification removed from KapalDetailView (handled elsewhere or disabled)
 
-                // select matching item if available
-                foreach (var item in cmbStatus.Items)
-                {
-                    if (item is System.Windows.Controls.ComboBoxItem cbi && string.Equals((cbi.Content as string) ?? string.Empty, status, StringComparison.OrdinalIgnoreCase))
-                    {
-                        cmbStatus.SelectedItem = cbi;
-                        break;
-                    }
-                }
-
-                popupStatus.IsOpen = true;
-            }
-            catch
-            {
-                // if anything goes wrong just open the popup
-                popupStatus.IsOpen = true;
-            }
-        }
-
-        private void BtnCancelStatus_Click(object sender, RoutedEventArgs e)
-        {
-            popupStatus.IsOpen = false;
-        }
-
-        private async void BtnApplyStatus_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (_kapalModel == null)
-                {
-                    var dbx = App.GetService<wpf.services.PostgresService>();
-                    if (long.TryParse(_kapalData.IdKapal, out long id))
-                    {
-                        _kapalModel = await dbx.GetKapalByIdAsync(id);
-                    }
-                }
-
-                if (_kapalModel == null)
-                {
-                    MessageBox.Show("Gagal menemukan data kapal.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                var selectedStatus = "Pending";
-                if (cmbStatus.SelectedItem is System.Windows.Controls.ComboBoxItem cbi)
-                    selectedStatus = cbi.Content as string ?? "Pending";
-
-                if (string.Equals(_kapalModel.StatusVerifikasi ?? "Pending", selectedStatus, StringComparison.OrdinalIgnoreCase))
-                {
-                    MessageBox.Show("Status tidak berubah.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-                    popupStatus.IsOpen = false;
-                    return;
-                }
-
-                var result = MessageBox.Show($"Ubah status verifikasi kapal dari '{_kapalModel.StatusVerifikasi ?? "Pending"}' menjadi '{selectedStatus}'?", "Konfirmasi", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result != MessageBoxResult.Yes)
-                {
-                    return;
-                }
-
-                _kapalModel.StatusVerifikasi = selectedStatus;
-                var db = App.GetService<wpf.services.PostgresService>();
-                await db.UpdateKapalAsync(_kapalModel);
-
-                // Refresh badge immediately
-                UpdateStatusBadge(selectedStatus);
-
-                MessageBox.Show("Status verifikasi kapal berhasil diperbarui.", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                popupStatus.IsOpen = false;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Gagal mengubah status verifikasi: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+        // Adding barang from Admin dashboard removed per request
     }
 
     // Model untuk data barang
@@ -343,5 +262,7 @@ namespace wpf.modules
         public string BeratBarang { get; set; } = string.Empty;
         public string Customer { get; set; } = string.Empty;
         public DateTime TanggalMasuk { get; set; }
+        // numeric value in kilograms for calculations
+        public decimal BeratKgValue { get; set; }
     }
 }

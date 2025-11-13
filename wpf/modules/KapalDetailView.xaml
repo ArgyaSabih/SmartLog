@@ -255,30 +255,12 @@
                                                    FontSize="12" Foreground="White" Margin="0,0,0,5"/>
                                         <TextBlock FontSize="32" FontWeight="Bold" Foreground="White">
                                             <Run x:Name="txtCapacity" Text="70.931"/>
-                                            <Run Text=" Ton" FontSize="20"/>
+                                            <Run Text=" Kg" FontSize="20"/>
                                         </TextBlock>
                                     </StackPanel>
                                 </Grid>
 
-                <!-- Verify button: toggle kapal verification status -->
-                                <!-- Single button that opens a popup for status selection -->
-                                <Button x:Name="btnSetStatus" Content="Ubah Status" Style="{StaticResource PrimaryButton}" Margin="0,10,0,0" Click="BtnSetStatus_Click"/>
-
-                                <Popup x:Name="popupStatus" Placement="Bottom" StaysOpen="False" AllowsTransparency="True" PlacementTarget="{Binding ElementName=btnSetStatus}" PopupAnimation="Slide">
-                                    <Border Background="White" CornerRadius="6" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1" Width="220">
-                                        <StackPanel>
-                                            <ComboBox x:Name="cmbStatus" Width="180" Height="36" Margin="0,0,0,10">
-                                                <ComboBoxItem>Pending</ComboBoxItem>
-                                                <ComboBoxItem>Verified</ComboBoxItem>
-                                                <ComboBoxItem>Rejected</ComboBoxItem>
-                                            </ComboBox>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                                <Button Content="Batal" Width="70" Margin="0,0,10,0" Click="BtnCancelStatus_Click"/>
-                                                <Button x:Name="btnApplyStatus" Content="Simpan" Width="70" Click="BtnApplyStatus_Click"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Border>
-                                </Popup>
+                                <!-- Status controls removed per request -->
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -298,10 +280,13 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Table Title -->
-                        <TextBlock Grid.Row="0" Text="Daftar Barang" 
-                                   FontSize="20" FontWeight="Bold" 
-                                   Margin="0,0,0,20"/>
+                        <!-- Table Title and Actions -->
+                        <DockPanel Grid.Row="0" Margin="0,0,0,10">
+                            <TextBlock Text="Daftar Barang" FontSize="20" FontWeight="Bold" DockPanel.Dock="Left" VerticalAlignment="Center" />
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                                <!-- 'Tambah Barang' removed from Admin dashboard per request -->
+                            </StackPanel>
+                        </DockPanel>
 
                         <!-- Barang List -->
                         <DataGrid x:Name="BarangList" Grid.Row="1"

@@ -192,11 +192,7 @@ namespace wpf.modules
 
         private void BtnFilter_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Fitur Filter akan segera hadir!", 
-                          "Info", 
-                          MessageBoxButton.OK, 
-                          MessageBoxImage.Information);
-            // TODO: Implement filter functionality
+            // Filter feature removed per request. No action.
         }
 
         // Local dummy data loader (used as fallback or for demo)

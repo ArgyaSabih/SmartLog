@@ -117,20 +117,7 @@
                                    Foreground="White" VerticalAlignment="Center"/>
                     </StackPanel>
 
-                    <!-- Search Box -->
-                    <Border Grid.Column="1" Background="#F5F5F5" CornerRadius="8" 
-                            Padding="15,0" MinWidth="300" HorizontalAlignment="Left" Height="35" Margin="40,0,0,0">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBox x:Name="txtSearch" BorderThickness="0" Background="Transparent"
-                                     VerticalAlignment="Center" FontSize="14"
-                                     Text="Search"/>
-                            <TextBlock Grid.Column="1" Text="🔍" FontSize="16" VerticalAlignment="Center"/>
-                        </Grid>
-                    </Border>
+                    <!-- Header search removed -->
 
                     <!-- User Profile and Controls -->
                     <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
