@@ -8,7 +8,8 @@
         Title="SmartLogistic - Customer Dashboard" 
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
-        Background="#F5F5F5">
+        Background="#F5F5F5"
+        FontFamily="Inter, Segoe UI, Arial">
 
     <Window.Resources>
         <!-- Button Styles -->
@@ -203,77 +204,79 @@
                         </Grid.RowDefinitions>
 
                         <!-- Table Header -->
-                        <Border Grid.Row="0" Background="#F8F9FA" 
-                                CornerRadius="10,10,0,0" Padding="20,15">
+                        <Border Grid.Row="0" Background="#EDF4F7" 
+                                CornerRadius="10,10,0,0" Padding="25,18">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="150"/>
-                                    <ColumnDefinition Width="100"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="150"/>
-                                    <ColumnDefinition Width="120"/>
-                                    <ColumnDefinition Width="120"/>
-                                    <ColumnDefinition Width="100"/>
-                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock Grid.Column="0" Text="Nama Barang ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="1" Text="Berat ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="2" Text="Kapal ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="3" Text="Dibuat ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="4" Text="Status ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="5" Text="Estimasi ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="6" Text="Detail ▼" FontWeight="SemiBold" FontSize="13"/>
-                                <TextBlock Grid.Column="7" Text="" FontWeight="SemiBold" FontSize="13"/>
+                                <TextBlock Grid.Column="0" Text="Nama Barang ▼" FontWeight="SemiBold" FontSize="12" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                <TextBlock Grid.Column="1" Text="ID Barang ▼" FontWeight="SemiBold" FontSize="12" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                <TextBlock Grid.Column="2" Text="Berat ▼" FontWeight="SemiBold" FontSize="12" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                <TextBlock Grid.Column="3" Text="Kapal ▼" FontWeight="SemiBold" FontSize="12" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                <TextBlock Grid.Column="4" Text="Dikirim ▼" FontWeight="SemiBold" FontSize="12" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                <TextBlock Grid.Column="5" Text="Status ▼" FontWeight="SemiBold" FontSize="12" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                <TextBlock Grid.Column="6" Text="Estimasi ▼" FontWeight="SemiBold" FontSize="12" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                <TextBlock Grid.Column="7" Text="Detail ▼" FontWeight="SemiBold" FontSize="12" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
                             </Grid>
                         </Border>
 
                         <!-- Table Content (ScrollViewer with DataGrid) -->
                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                            <ItemsControl x:Name="itemsControlPengiriman" Margin="20,10">
+                            <ItemsControl x:Name="itemsControlPengiriman" Margin="25,15">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="0,15">
+                                        <Border BorderBrush="#E8EEF2" BorderThickness="0,0,0,1" Padding="0,18">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="150"/>
-                                                    <ColumnDefinition Width="100"/>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="150"/>
-                                                    <ColumnDefinition Width="120"/>
-                                                    <ColumnDefinition Width="120"/>
-                                                    <ColumnDefinition Width="100"/>
-                                                    <ColumnDefinition Width="80"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                                    <TextBlock Grid.Column="0" Text="{Binding NamaBarang}" 
-                                                                               FontSize="13" VerticalAlignment="Center"/>
-                                                                    <TextBlock Grid.Column="1" Text="{Binding Berat}" 
-                                                                               FontSize="13" VerticalAlignment="Center"/>
-                                                                    <TextBlock Grid.Column="2" Text="{Binding NamaKapal}" 
-                                                                               FontSize="13" VerticalAlignment="Center"/>
-                                                                    <TextBlock Grid.Column="3" Text="{Binding TanggalDibuat}" 
-                                                                               FontSize="13" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="0" Text="{Binding NamaBarang}" 
+                                                           FontSize="13" FontWeight="Medium" VerticalAlignment="Center" Foreground="#1A1A1A" HorizontalAlignment="Left"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding IdBarang}" 
+                                                           FontSize="12" VerticalAlignment="Center" Foreground="#3B7D98" HorizontalAlignment="Left"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding Berat}" 
+                                                           FontSize="13" VerticalAlignment="Center" Foreground="#2C3E50" HorizontalAlignment="Left"/>
+                                                <TextBlock Grid.Column="3" Text="{Binding NamaKapal}" 
+                                                           FontSize="13" VerticalAlignment="Center" Foreground="#3B7D98" HorizontalAlignment="Left"/>
+                                                <TextBlock Grid.Column="4" Text="{Binding TanggalDibuat}" 
+                                                           FontSize="12" VerticalAlignment="Center" Foreground="#5A6C7D" HorizontalAlignment="Left"/>
 
-                                                                    <!-- Status Badge -->
-                                                                    <Border Grid.Column="4" Style="{StaticResource StatusBadgeStyle}"
-                                                                            Background="{Binding StatusColor}">
-                                                                        <TextBlock Text="{Binding Status}" FontSize="11" 
-                                                                                   FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                                    </Border>
+                                                <!-- Status Badge -->
+                                                <Border Grid.Column="5" CornerRadius="12" Padding="10,5" 
+                                                        HorizontalAlignment="Left"
+                                                        Background="{Binding StatusColor}">
+                                                    <TextBlock Text="{Binding Status}" FontSize="11" 
+                                                               FontWeight="SemiBold" Foreground="White" />
+                                                </Border>
 
-                                                                    <TextBlock Grid.Column="5" Text="{Binding Estimasi}" 
-                                                                               FontSize="13" VerticalAlignment="Center"/>
-                                                                    <TextBlock Grid.Column="6" Text="{Binding Detail}" 
-                                                                               FontSize="13" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="6" Text="{Binding Estimasi}" 
+                                                           FontSize="12" VerticalAlignment="Center" Foreground="#5A6C7D" HorizontalAlignment="Left"/>
                                                 
-                                                                    <!-- Detail Button -->
-                                                                    <Button Grid.Column="7" Content="📋" 
-                                                                            Background="Transparent" BorderThickness="0"
-                                                                            FontSize="16" Cursor="Hand"
-                                                                            ToolTip="Lihat Detail"
-                                                                            Click="BtnDetailPengiriman_Click"
-                                                                            Tag="{Binding IdBarang}"/>
+                                                <!-- Detail Button -->
+                                                <Button Grid.Column="7" Content="📋" 
+                                                        Background="Transparent" BorderThickness="0"
+                                                        FontSize="18" Cursor="Hand"
+                                                        ToolTip="Lihat Detail"
+                                                        Click="BtnDetailPengiriman_Click"
+                                                        Tag="{Binding PengirimanId}"
+                                                        HorizontalAlignment="Left"/>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>

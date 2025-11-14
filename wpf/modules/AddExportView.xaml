@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Add New Export" Height="400" Width="500" WindowStartupLocation="CenterOwner" Background="#F5F5F5">
+        Title="Add New Export" Height="400" Width="500" WindowStartupLocation="CenterOwner" Background="#F5F5F5"
+        FontFamily="Inter, Segoe UI, Arial">
 
     <Grid Margin="20">
         <Grid.RowDefinitions>

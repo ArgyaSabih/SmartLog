@@ -1,8 +1,7 @@
 using System;
 using System.Windows;
-using System.Windows.Input; // Diperlukan untuk MouseLeftButtonDown
 using System.Windows.Controls;
-
+using System.Windows.Input; // Diperlukan untuk MouseLeftButtonDown
 
 // Pastikan namespace ini sesuai dengan proyek Anda
 namespace wpf.modules
@@ -22,6 +21,7 @@ namespace wpf.modules
             this.MouseLeftButtonDown += OnMouseLeftButtonDown;
 
             // Trik untuk watermark PasswordBox
+            txtPassword.PasswordChanged += TxtPassword_PasswordChanged;
             txtPassword.GotFocus += TxtPassword_GotFocus;
             txtPassword.LostFocus += TxtPassword_LostFocus;
             TxtPassword_LostFocus(null, null);
@@ -37,20 +37,30 @@ namespace wpf.modules
             // Validasi input
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Email dan password harus diisi!", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "Email dan password harus diisi!",
+                    "Validasi",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
                 return;
             }
 
             // DEMONSTRASI OOP: Menggunakan Polymorphism untuk login
             // Admin dan Customer punya method Login() yang sama tapi behavior berbeda
-            
+
             try
             {
                 // Coba login sebagai Customer
                 var customer = await _dbService.LoginCustomerAsync(email, password);
                 if (customer != null)
                 {
-                    MessageBox.Show($"Login Customer Berhasil!\n\n{customer.GetUserInfo()}", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(
+                        $"Login Customer Berhasil!\n\n{customer.GetUserInfo()}",
+                        "Sukses",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
                     // Simpan session sederhana ke Application.Properties
                     Application.Current.Properties["CurrentUserRole"] = "Customer";
                     Application.Current.Properties["CurrentUserEmail"] = customer.Email;
@@ -67,7 +77,12 @@ namespace wpf.modules
                 var admin = await _dbService.LoginAdminAsync(email, password);
                 if (admin != null)
                 {
-                    MessageBox.Show($"Login Admin Berhasil!\n\n{admin.GetUserInfo()}", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(
+                        $"Login Admin Berhasil!\n\n{admin.GetUserInfo()}",
+                        "Sukses",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
                     // Simpan session sederhana ke Application.Properties
                     Application.Current.Properties["CurrentUserRole"] = "Admin";
                     Application.Current.Properties["CurrentUserEmail"] = admin.Email;
@@ -79,11 +94,21 @@ namespace wpf.modules
                     return;
                 }
 
-                MessageBox.Show("Email atau password salah.", "Login Gagal", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "Email atau password salah.",
+                    "Login Gagal",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Terjadi kesalahan saat login: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    $"Terjadi kesalahan saat login: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
 
@@ -91,36 +116,51 @@ namespace wpf.modules
         {
             this.DialogResult = false;
         }
-        
+
         // --- METODE BANTUAN ---
 
         private void CreateAccount_Click(object sender, RoutedEventArgs e)
         {
             // Buka jendela Register dengan Dispatcher
-            this.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                RegisterView registerWindow = new RegisterView();
-                registerWindow.Show();
-                this.Close();
-            }), System.Windows.Threading.DispatcherPriority.Background);
+            this.Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    RegisterView registerWindow = new RegisterView();
+                    registerWindow.Show();
+                    this.Close();
+                }),
+                System.Windows.Threading.DispatcherPriority.Background
+            );
         }
-        
+
         // Membuat window bisa di-drag
         private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // Cek apakah yang diklik bukan tombol atau input
-            if (e.Source == sender) 
+            if (e.Source == sender)
             {
-                 this.DragMove();
+                this.DragMove();
             }
         }
 
         // --- Trik untuk Watermark PasswordBox ---
-        
+
+        // Saat PasswordBox berubah (user mengetik), sembunyikan watermark
+        private void TxtPassword_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            var watermark = txtPassword.Template.FindName("Watermark", txtPassword) as TextBlock;
+            if (watermark != null)
+            {
+                // Sembunyikan watermark jika ada teks, tampilkan jika kosong
+                watermark.Visibility = string.IsNullOrEmpty(txtPassword.Password)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+        }
+
         // Saat PasswordBox mendapat fokus, sembunyikan watermark
         private void TxtPassword_GotFocus(object sender, RoutedEventArgs e)
         {
-            // Cari TextBlock Watermark di dalam Template PasswordBox
             var watermark = txtPassword.Template.FindName("Watermark", txtPassword) as TextBlock;
             if (watermark != null)
             {
@@ -131,19 +171,13 @@ namespace wpf.modules
         // Saat PasswordBox kehilangan fokus
         private void TxtPassword_LostFocus(object? sender, RoutedEventArgs? e)
         {
-            // Cari TextBlock Watermark
             var watermark = txtPassword.Template.FindName("Watermark", txtPassword) as TextBlock;
             if (watermark != null)
             {
                 // Tampilkan watermark HANYA JIKA PasswordBox kosong
-                if (string.IsNullOrEmpty(txtPassword.Password))
-                {
-                    watermark.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    watermark.Visibility = Visibility.Collapsed;
-                }
+                watermark.Visibility = string.IsNullOrEmpty(txtPassword.Password)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
             }
         }
     }
