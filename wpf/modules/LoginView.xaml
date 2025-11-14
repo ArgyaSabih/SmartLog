@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         Title="Login" Height="600" Width="900"
         WindowStartupLocation="CenterScreen"
-        Background="#F5F5F5">
+        Background="#F5F5F5"
+        FontFamily="Inter, Segoe UI, Arial">
 
     <Window.Resources>
         
@@ -22,28 +23,17 @@
                         <Grid>
                             <TextBlock x:Name="Watermark" Text="{TemplateBinding Tag}" 
                                        Foreground="Gray" VerticalAlignment="Center"
-                                       Margin="2,0,0,0" IsHitTestVisible="False"/>
+                                       Margin="2,0,0,0" IsHitTestVisible="False"
+                                       Visibility="Collapsed"/>
                             <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" />
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="Text" Value="">
-                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
-                            </Trigger>
-                            <Trigger Property="Text" Value="{x:Null}">
-                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
-                            </Trigger>
-                            <Trigger Property="Text" Value="">
-                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
-                            </Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
                                     <Condition Property="Text" Value=""/>
                                 </MultiTrigger.Conditions>
                                 <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
                             </MultiTrigger>
-                            <Trigger Property="IsFocused" Value="True">
-                                <Setter TargetName="Watermark" Property="Visibility" Value="Collapsed"/>
-                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -62,14 +52,9 @@
                             <TextBlock x:Name="Watermark" Text="{TemplateBinding Tag}" 
                                        Foreground="Gray" VerticalAlignment="Center"
                                        Margin="2,0,0,0" IsHitTestVisible="False"
-                                       Visibility="Collapsed"/>
+                                       Visibility="Visible"/>
                             <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" />
                         </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsFocused" Value="True">
-                                <Setter TargetName="Watermark" Property="Visibility" Value="Collapsed"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>

@@ -8,7 +8,8 @@
         Title="SmartLogistic - Admin" 
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
-        Background="White">
+        Background="White"
+        FontFamily="Inter, Segoe UI, Arial">
 
     <Window.Resources>
         <!-- Status Badge Styles -->
