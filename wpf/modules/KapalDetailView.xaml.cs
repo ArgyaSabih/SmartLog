@@ -1,19 +1,20 @@
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Collections.ObjectModel;
 using wpf.models;
-using System.Threading.Tasks;
-using System.Linq;
 
 namespace wpf.modules
 {
     public partial class KapalDetailView : Window
     {
-    public ObservableCollection<BarangData> Barangs { get; set; } = new ObservableCollection<BarangData>();
-    private KapalData _kapalData;
-    private AdminView? _parentAdminView;
-    private Kapal? _kapalModel;
+        public ObservableCollection<BarangData> Barangs { get; set; } =
+            new ObservableCollection<BarangData>();
+        private KapalData _kapalData;
+        private AdminView? _parentAdminView;
+        private Kapal? _kapalModel;
 
         public KapalDetailView(KapalData kapal, AdminView? parentView = null)
         {
@@ -53,15 +54,25 @@ namespace wpf.modules
                 if (_kapalModel != null)
                 {
                     // Update UI with real DB values
-                    txtKapalName.Dispatcher.Invoke(() => txtKapalName.Text = _kapalModel.NamaKapal ?? _kapalData.NamaKapal);
-                    txtCapacity.Dispatcher.Invoke(() => txtCapacity.Text = _kapalModel.KapasitasTon.ToString("G"));
-                    txtTujuan.Dispatcher.Invoke(() => txtTujuan.Text = _kapalModel.LokasiTujuan ?? "-");
-                    txtLokasiSekarang.Dispatcher.Invoke(() => txtLokasiSekarang.Text = _kapalModel.LokasiSekarang ?? "-");
+                    txtKapalName.Dispatcher.Invoke(
+                        () => txtKapalName.Text = _kapalModel.NamaKapal ?? _kapalData.NamaKapal
+                    );
+                    txtCapacity.Dispatcher.Invoke(
+                        () => txtCapacity.Text = _kapalModel.KapasitasTon.ToString("G")
+                    );
+                    txtTujuan.Dispatcher.Invoke(
+                        () => txtTujuan.Text = _kapalModel.LokasiTujuan ?? "-"
+                    );
+                    txtLokasiSekarang.Dispatcher.Invoke(
+                        () => txtLokasiSekarang.Text = _kapalModel.LokasiSekarang ?? "-"
+                    );
                     // Update status badge (no in-place status editor)
                     UpdateStatusBadge(_kapalModel.StatusVerifikasi ?? "Pending");
                 }
             }
-            catch { /* ignore and keep existing display */ }
+            catch
+            { /* ignore and keep existing display */
+            }
         }
 
         private void UpdateStatusBadge(string? status)
@@ -74,22 +85,34 @@ namespace wpf.modules
                 switch (s.ToLowerInvariant())
                 {
                     case "verified":
-                        statusBadge.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D1F4E0"));
-                        txtStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1F7A3A"));
+                        statusBadge.Background = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString("#D1F4E0")
+                        );
+                        txtStatusBadge.Foreground = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString("#1F7A3A")
+                        );
                         break;
                     case "rejected":
-                        statusBadge.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F8D7DA"));
-                        txtStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#7A1A1A"));
+                        statusBadge.Background = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString("#F8D7DA")
+                        );
+                        txtStatusBadge.Foreground = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString("#7A1A1A")
+                        );
                         break;
                     default:
-                        statusBadge.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFF4C2"));
-                        txtStatusBadge.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#8A6D00"));
+                        statusBadge.Background = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString("#FFF4C2")
+                        );
+                        txtStatusBadge.Foreground = new SolidColorBrush(
+                            (Color)ColorConverter.ConvertFromString("#8A6D00")
+                        );
                         break;
                 }
             });
         }
 
-    private async Task LoadBarangDataFromDbAsync()
+        private async Task LoadBarangDataFromDbAsync()
         {
             try
             {
@@ -102,7 +125,8 @@ namespace wpf.modules
                     }
                 }
 
-                if (_kapalModel == null) return;
+                if (_kapalModel == null)
+                    return;
 
                 // Get pengirimans that belong to this kapal
                 var pengirimans = await db.GetPengirimansByKapalIdAsync(_kapalModel.KapalId);
@@ -111,29 +135,38 @@ namespace wpf.modules
                 var items = new System.Collections.Generic.List<BarangData>();
                 foreach (var p in pengirimans)
                 {
-                    items.Add(new BarangData
-                    {
-                        IdBarang = $"#P{p.PengirimanId}",
-                        NamaBarang = p.NamaBarang ?? "-",
-                        BeratBarang = FormatBeratKgToDisplay(p.BeratKg),
-                        BeratKgValue = p.BeratKg,
-                        Customer = p.CustomerId.ToString(),
-                        TanggalMasuk = p.TanggalMulai
-                    });
+                    items.Add(
+                        new BarangData
+                        {
+                            PengirimanId = p.PengirimanId,
+                            IdBarang = $"#P{p.PengirimanId}",
+                            NamaBarang = p.NamaBarang ?? "-",
+                            BeratBarang = FormatBeratKgToDisplay(p.BeratKg),
+                            BeratKgValue = p.BeratKg,
+                            Customer = p.CustomerId.ToString(),
+                            TanggalMasuk = p.TanggalMulai,
+                        }
+                    );
                 }
 
                 // Update ObservableCollection on UI thread
                 this.Dispatcher.Invoke(() =>
                 {
                     Barangs.Clear();
-                    foreach (var it in items) Barangs.Add(it);
+                    foreach (var it in items)
+                        Barangs.Add(it);
                     UpdateCapacityDisplay();
                 });
             }
             catch (Exception ex)
             {
                 // Keep UI responsive; show simple message
-                MessageBox.Show($"Gagal memuat data barang: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    $"Gagal memuat data barang: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
 
@@ -150,13 +183,15 @@ namespace wpf.modules
 
         private void UpdateCapacityDisplay()
         {
-            if (_kapalModel == null) return;
+            if (_kapalModel == null)
+                return;
             // Sum berat barang in kg
             decimal totalKg = Barangs.Sum(b => b.BeratKgValue);
             // kapal kapasitas in ton -> convert to kg
             decimal kapasitasKg = _kapalModel.KapasitasTon * 1000m;
             decimal sisaKg = kapasitasKg - totalKg;
-            if (sisaKg < 0) sisaKg = 0;
+            if (sisaKg < 0)
+                sisaKg = 0;
             // show in tons with 3 decimals
             decimal sisaTon = Math.Round(sisaKg / 1000m, 3);
             txtCapacity.Text = sisaTon.ToString("G");
@@ -168,7 +203,7 @@ namespace wpf.modules
             AdminView adminView = new AdminView();
             adminView.Show();
             adminView.SwitchToKapalTab(); // Panggil method untuk switch ke tab Kapal
-            
+
             // Tutup detail view
             this.Close();
         }
@@ -176,17 +211,35 @@ namespace wpf.modules
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
             // Konfirmasi logout
-            var result = MessageBox.Show("Apakah Anda yakin ingin logout?", "Konfirmasi Logout", 
-                                        MessageBoxButton.YesNo, MessageBoxImage.Question);
-            
+            var result = MessageBox.Show(
+                "Apakah Anda yakin ingin logout?",
+                "Konfirmasi Logout",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+            );
+
             if (result == MessageBoxResult.Yes)
             {
                 // Kembali ke LoginView
                 LoginView loginView = new LoginView();
                 loginView.Show();
-                
+
                 // Tutup detail view
                 this.Close();
+            }
+        }
+
+        // Event handler untuk tombol detail barang
+        private void BtnDetailBarang_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement fe && fe.Tag != null)
+            {
+                if (long.TryParse(fe.Tag.ToString(), out long pengirimanId))
+                {
+                    var detailDialog = new DetailPengirimanKapal(pengirimanId);
+                    detailDialog.Owner = this;
+                    detailDialog.ShowDialog();
+                }
             }
         }
 
@@ -194,8 +247,14 @@ namespace wpf.modules
         private void BtnDetailLokasi_Click(object sender, RoutedEventArgs e)
         {
             string lokasi = _kapalModel?.LokasiSekarang ?? txtLokasiSekarang.Text;
-            string message = $"Lokasi saat ini:\n{lokasi}\n\nStatus Verifikasi: {_kapalModel?.StatusVerifikasi ?? "Unknown"}";
-            MessageBox.Show(message, "Detail Lokasi", MessageBoxButton.OK, MessageBoxImage.Information);
+            string message =
+                $"Lokasi saat ini:\n{lokasi}\n\nStatus Verifikasi: {_kapalModel?.StatusVerifikasi ?? "Unknown"}";
+            MessageBox.Show(
+                message,
+                "Detail Lokasi",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
         }
 
         // Update lokasi via small dialog and persist to DB
@@ -211,8 +270,14 @@ namespace wpf.modules
                 {
                     var newLoc = dlg.LocationResult!;
                     // Confirm update
-                    var confirm = MessageBox.Show($"Update lokasi kapal dari '{_kapalModel?.LokasiSekarang ?? txtLokasiSekarang.Text}' ke '{newLoc}'?", "Konfirmasi Update Lokasi", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (confirm != MessageBoxResult.Yes) return;
+                    var confirm = MessageBox.Show(
+                        $"Update lokasi kapal dari '{_kapalModel?.LokasiSekarang ?? txtLokasiSekarang.Text}' ke '{newLoc}'?",
+                        "Konfirmasi Update Lokasi",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question
+                    );
+                    if (confirm != MessageBoxResult.Yes)
+                        return;
                     // Update model
                     if (_kapalModel == null)
                     {
@@ -233,17 +298,32 @@ namespace wpf.modules
                         // Update UI
                         txtLokasiSekarang.Text = _kapalModel.LokasiSekarang ?? newLoc;
 
-                        MessageBox.Show("Lokasi kapal berhasil diperbarui.", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show(
+                            "Lokasi kapal berhasil diperbarui.",
+                            "Sukses",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information
+                        );
                     }
                     else
                     {
-                        MessageBox.Show("Gagal menemukan data kapal untuk diupdate.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(
+                            "Gagal menemukan data kapal untuk diupdate.",
+                            "Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error
+                        );
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Gagal mengupdate lokasi: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    $"Gagal mengupdate lokasi: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
 
@@ -257,11 +337,13 @@ namespace wpf.modules
     // Model untuk data barang
     public class BarangData
     {
+        public long PengirimanId { get; set; }
         public string IdBarang { get; set; } = string.Empty;
         public string NamaBarang { get; set; } = string.Empty;
         public string BeratBarang { get; set; } = string.Empty;
         public string Customer { get; set; } = string.Empty;
         public DateTime TanggalMasuk { get; set; }
+
         // numeric value in kilograms for calculations
         public decimal BeratKgValue { get; set; }
     }

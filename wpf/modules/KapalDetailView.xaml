@@ -290,129 +290,92 @@
                         </DockPanel>
 
                         <!-- Barang List -->
-                        <DataGrid x:Name="BarangList" Grid.Row="1"
-                                  AutoGenerateColumns="False"
-                                  CanUserAddRows="False"
-                                  CanUserDeleteRows="False"
-                                  CanUserResizeRows="False"
-                                  CanUserSortColumns="True"
-                                  IsReadOnly="True"
-                                  HeadersVisibility="Column"
-                                  GridLinesVisibility="None"
-                                  BorderThickness="0"
-                                  Background="White"
-                                  RowHeight="50"
-                                  FontSize="14">
-                            
-                            <DataGrid.ColumnHeaderStyle>
-                                <Style TargetType="DataGridColumnHeader">
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="Foreground" Value="#666666"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="FontSize" Value="13"/>
-                                    <Setter Property="Padding" Value="15,10"/>
-                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                    <Setter Property="BorderBrush" Value="#E0E0E0"/>
-                                </Style>
-                            </DataGrid.ColumnHeaderStyle>
+                        <Border Grid.Row="1" CornerRadius="10" 
+                                BorderBrush="#E0E0E0" BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
 
-                            <DataGrid.RowStyle>
-                                <Style TargetType="DataGridRow">
-                                    <Setter Property="Background" Value="White"/>
-                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                    <Setter Property="BorderBrush" Value="#F0F0F0"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#F8F9FA"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DataGrid.RowStyle>
+                                <!-- Table Header -->
+                                <Border Grid.Row="0" Background="#EDF4F7" 
+                                        CornerRadius="10,10,0,0" Padding="25,18">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
 
-                            <DataGrid.CellStyle>
-                                <Style TargetType="DataGridCell">
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Setter Property="Padding" Value="15,0"/>
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="Foreground" Value="#333333"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter Property="Background" Value="Transparent"/>
-                                            <Setter Property="Foreground" Value="#333333"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </DataGrid.CellStyle>
+                                        <TextBlock Grid.Column="0" Text="ID Barang ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="1" Text="Nama Barang ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="2" Text="Berat ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="3" Text="Customer ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="4" Text="Tanggal ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="5" Text="Aksi ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                    </Grid>
+                                </Border>
 
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="ID Barang" Binding="{Binding IdBarang}" Width="1*"/>
-                                <DataGridTextColumn Header="Nama Barang" Binding="{Binding NamaBarang}" Width="1.5*"/>
-                                <DataGridTextColumn Header="Berat Barang" Binding="{Binding BeratBarang}" Width="1.2*"/>
-                                <DataGridTextColumn Header="Customer" Binding="{Binding Customer}" Width="1.2*"/>
-                                <DataGridTextColumn Header="Tanggal Masuk" Binding="{Binding TanggalMasuk, StringFormat=dd MMM yyyy}" Width="1.2*"/>
-                                
-                                <DataGridTemplateColumn Header="Verifikasi" Width="1*">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                <Button Background="#4CAF50" BorderThickness="0" 
-                                                        Width="30" Height="30" Margin="5,0"
-                                                        Cursor="Hand" ToolTip="Verify">
-                                                    <Button.Template>
-                                                        <ControlTemplate>
-                                                            <Border Background="{TemplateBinding Background}" 
-                                                                    CornerRadius="6">
-                                                                <TextBlock Text="✓" Foreground="White" 
-                                                                           FontSize="16" FontWeight="Bold"
-                                                                           HorizontalAlignment="Center" 
-                                                                           VerticalAlignment="Center"/>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Button.Template>
-                                                </Button>
-                                                <Button Background="#F44336" BorderThickness="0" 
-                                                        Width="30" Height="30" Margin="5,0"
-                                                        Cursor="Hand" ToolTip="Delete">
-                                                    <Button.Template>
-                                                        <ControlTemplate>
-                                                            <Border Background="{TemplateBinding Background}" 
-                                                                    CornerRadius="6">
-                                                                <TextBlock Text="✕" Foreground="White" 
-                                                                           FontSize="16" FontWeight="Bold"
-                                                                           HorizontalAlignment="Center" 
-                                                                           VerticalAlignment="Center"/>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Button.Template>
-                                                </Button>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
+                                <!-- Table Content -->
+                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl x:Name="BarangList" Margin="25,15">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border BorderBrush="#E8EEF2" BorderThickness="0,0,0,1" Padding="0,18">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
 
-                                <DataGridTemplateColumn Header="Detail" Width="0.8*">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <Button Background="#E3F2FD" BorderThickness="0" 
-                                                    Width="30" Height="30"
-                                                    Cursor="Hand" ToolTip="View Detail"
-                                                    HorizontalAlignment="Center">
-                                                <Button.Template>
-                                                    <ControlTemplate>
-                                                        <Border Background="{TemplateBinding Background}" 
-                                                                CornerRadius="6">
-                                                            <TextBlock Text="📋" FontSize="14"
-                                                                       HorizontalAlignment="Center" 
-                                                                       VerticalAlignment="Center"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Button.Template>
-                                            </Button>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
+                                                        <TextBlock Grid.Column="0" Text="{Binding IdBarang}" 
+                                                                   FontSize="13" VerticalAlignment="Center" Foreground="#3B7D98" HorizontalAlignment="Left"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding NamaBarang}" 
+                                                                   FontSize="14" FontWeight="Medium" VerticalAlignment="Center" Foreground="#1A1A1A" HorizontalAlignment="Left"/>
+                                                        <TextBlock Grid.Column="2" Text="{Binding BeratBarang}" 
+                                                                   FontSize="13" VerticalAlignment="Center" Foreground="#2C3E50" HorizontalAlignment="Left"/>
+                                                        <TextBlock Grid.Column="3" Text="{Binding Customer}" 
+                                                                   FontSize="13" VerticalAlignment="Center" Foreground="#2C3E50" HorizontalAlignment="Left"/>
+                                                        <TextBlock Grid.Column="4" Text="{Binding TanggalMasuk, StringFormat=dd MMM yyyy}" 
+                                                                   FontSize="13" VerticalAlignment="Center" Foreground="#5A6C7D" HorizontalAlignment="Left"/>
+                                                        
+                                                        <!-- Action Buttons -->
+                                                        <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Left">
+                                                            <Button Content="✓" 
+                                                                    Background="Transparent" BorderThickness="0"
+                                                                    FontSize="18" FontWeight="Bold" Cursor="Hand"
+                                                                    Foreground="#4CAF50"
+                                                                    ToolTip="Verifikasi"
+                                                                    Margin="0,0,10,0"/>
+                                                            <Button Content="📋" 
+                                                                    Background="Transparent" BorderThickness="0"
+                                                                    FontSize="16" Cursor="Hand"
+                                                                    ToolTip="Detail"
+                                                                    Click="BtnDetailBarang_Click"
+                                                                    Tag="{Binding PengirimanId}"
+                                                                    Margin="0,0,10,0"/>
+                                                            <Button Content="✕" 
+                                                                    Background="Transparent" BorderThickness="0"
+                                                                    FontSize="16" FontWeight="Bold" Cursor="Hand"
+                                                                    Foreground="#F44336"
+                                                                    ToolTip="Hapus"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </Grid>
+                        </Border>
 
                         <!-- Pagination -->
                         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
