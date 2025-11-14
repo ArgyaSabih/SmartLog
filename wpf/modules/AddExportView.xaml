@@ -4,78 +4,231 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Add New Export" Height="400" Width="500" WindowStartupLocation="CenterOwner" Background="#F5F5F5"
+        Title="Tambah Pengiriman" SizeToContent="Height" Width="900"
+        WindowStartupLocation="CenterOwner"
+        Background="Transparent"
+        AllowsTransparency="True"
+        WindowStyle="None"
         FontFamily="Inter, Segoe UI, Arial">
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Window.Resources>
+        <Style x:Key="CloseButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="5" Padding="8">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#D32F2F"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-        <TextBlock Text="Tambah Pengiriman Baru" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+        <Style x:Key="InputLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#5A6C7D"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
 
-        <StackPanel Grid.Row="1" Margin="0,10,0,10" VerticalAlignment="Top">
-            <!-- ID and Status are generated/handled internally; not shown in the form -->
+        <Style x:Key="InputStyle" TargetType="Control">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
 
-            <Grid Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="Nama Barang:" Grid.Column="0" VerticalAlignment="Center"/>
-                <TextBox x:Name="txtNamaBarang" Grid.Column="1" />
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Padding="20,10">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <!-- Main Card -->
+        <Border Background="White" 
+                CornerRadius="15"
+                Margin="20">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" Opacity="0.2" BlurRadius="30" ShadowDepth="0"/>
+            </Border.Effect>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header -->
+                <Border Grid.Row="0" Background="#3B7D98" 
+                        CornerRadius="15,15,0,0" 
+                        Padding="30,20">
+                    <Grid>
+                        <TextBlock Text="➕ Tambah Pengiriman Baru" 
+                                   FontSize="22" 
+                                   FontWeight="Bold" 
+                                   Foreground="White"
+                                   VerticalAlignment="Center"/>
+
+                        <!-- Close Button -->
+                        <Button Content="✕" 
+                                Width="35" Height="35"
+                                FontSize="18"
+                                FontWeight="Bold"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Style="{StaticResource CloseButtonStyle}"
+                                Click="BtnCancel_Click"/>
+                    </Grid>
+                </Border>
+
+                <!-- Content -->
+                <StackPanel Grid.Row="1" Margin="40,30">
+                    
+                    <!-- Form Section -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Left Column -->
+                        <StackPanel Grid.Column="0">
+                            <!-- Nama Barang -->
+                            <TextBlock Text="Nama Barang" Style="{StaticResource InputLabelStyle}"/>
+                            <TextBox x:Name="txtNamaBarang" 
+                                     Style="{StaticResource InputStyle}"
+                                     Margin="0,0,0,20"/>
+
+                            <!-- Berat -->
+                            <TextBlock Text="Berat (kg)" Style="{StaticResource InputLabelStyle}"/>
+                            <TextBox x:Name="txtBerat" 
+                                     Style="{StaticResource InputStyle}"
+                                     Margin="0,0,0,20"/>
+
+                            <!-- Pilih Kapal -->
+                            <TextBlock Text="Pilih Kapal" Style="{StaticResource InputLabelStyle}"/>
+                            <ComboBox x:Name="cmbKapal" 
+                                      DisplayMemberPath="NamaKapal"
+                                      Height="40"
+                                      Padding="12,8"
+                                      FontSize="14"
+                                      BorderBrush="#D1D5DB"
+                                      BorderThickness="1"
+                                      Background="White"
+                                      Margin="0,0,0,20"/>
+                        </StackPanel>
+
+                        <!-- Right Column -->
+                        <StackPanel Grid.Column="2">
+                            <!-- Tanggal Dibuat -->
+                            <TextBlock Text="Tanggal Dibuat" Style="{StaticResource InputLabelStyle}"/>
+                            <TextBox x:Name="txtDibuat" 
+                                     Style="{StaticResource InputStyle}"
+                                     IsReadOnly="True"
+                                     Background="#F8F9FA"
+                                     Margin="0,0,0,20"/>
+
+                            <!-- Estimasi Tiba -->
+                            <TextBlock Text="Estimasi Tiba" Style="{StaticResource InputLabelStyle}"/>
+                            <TextBox x:Name="txtEstimasi" 
+                                     Style="{StaticResource InputStyle}"
+                                     IsReadOnly="True"
+                                     Background="#F8F9FA"
+                                     Margin="0,0,0,20"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Detail Barang -->
+                    <TextBlock Text="Detail Barang" Style="{StaticResource InputLabelStyle}" Margin="0,10,0,8"/>
+                    <TextBox x:Name="txtDetail" 
+                             AcceptsReturn="True" 
+                             Height="120" 
+                             TextWrapping="Wrap"
+                             Padding="12"
+                             FontSize="14"
+                             BorderBrush="#D1D5DB"
+                             BorderThickness="1"
+                             Background="White"
+                             VerticalScrollBarVisibility="Auto"/>
+
+                </StackPanel>
+
+                <!-- Footer Buttons -->
+                <Border Grid.Row="2" 
+                        BorderBrush="#E0E0E0" 
+                        BorderThickness="0,1,0,0" 
+                        Padding="40,20"
+                        Background="#FAFAFA"
+                        CornerRadius="0,0,15,15">
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Right">
+                        <Button x:Name="btnCancel"
+                                Content="Batal" 
+                                Width="120"
+                                Click="BtnCancel_Click"
+                                Margin="0,0,15,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
+                                    <Setter Property="Background" Value="#6C757D"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#5A6268"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        
+                        <Button x:Name="btnSave"
+                                Content="Simpan" 
+                                Width="120"
+                                Click="BtnSave_Click">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
+                                    <Setter Property="Background" Value="#3B7D98"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#2E6378"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </Border>
             </Grid>
-
-            <Grid Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="Berat (kg):" Grid.Column="0" VerticalAlignment="Center"/>
-                <TextBox x:Name="txtBerat" Grid.Column="1" />
-            </Grid>
-
-            <Grid Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="Pilih Kapal:" Grid.Column="0" VerticalAlignment="Center"/>
-                <ComboBox x:Name="cmbKapal" Grid.Column="1" DisplayMemberPath="NamaKapal"/>
-            </Grid>
-
-            <!-- <Grid Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="Status:" Grid.Column="0" VerticalAlignment="Center"/>
-                <TextBlock x:Name="txtStatus" Grid.Column="1" Text="Proses" VerticalAlignment="Center" FontWeight="Bold" />
-            </Grid> -->
-
-            <Grid Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="Detail:" Grid.Column="0" VerticalAlignment="Top"/>
-                <TextBox x:Name="txtDetail" Grid.Column="1" AcceptsReturn="True" Height="80" TextWrapping="Wrap"/>
-            </Grid>
-
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,5,0,0">
-                <TextBlock Text="Dibuat:" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                <TextBlock x:Name="txtDibuat" VerticalAlignment="Center"/>
-                <TextBlock Text="    Estimasi:" VerticalAlignment="Center" Margin="20,0,10,0"/>
-                <TextBlock x:Name="txtEstimasi" VerticalAlignment="Center"/>
-            </StackPanel>
-        </StackPanel>
-
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="btnCancel" Content="Cancel" Width="100" Margin="0,0,10,0" Click="BtnCancel_Click"/>
-            <Button x:Name="btnSave" Content="Save" Width="100" Click="BtnSave_Click"/>
-        </StackPanel>
-
+        </Border>
     </Grid>
 </Window>

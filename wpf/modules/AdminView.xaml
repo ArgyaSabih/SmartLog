@@ -217,71 +217,72 @@
                             </Grid>
 
                             <!-- Customer List -->
-                            <DataGrid x:Name="CustomerList" Grid.Row="1"
-                                      AutoGenerateColumns="False"
-                                      CanUserAddRows="False"
-                                      CanUserDeleteRows="False"
-                                      CanUserResizeRows="False"
-                                      CanUserSortColumns="True"
-                                      IsReadOnly="True"
-                                      HeadersVisibility="Column"
-                                      GridLinesVisibility="None"
-                                      BorderThickness="0"
-                                      Background="White"
-                                      RowHeight="50"
-                                      FontSize="14">
-                                
-                                <DataGrid.ColumnHeaderStyle>
-                                    <Style TargetType="DataGridColumnHeader">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Foreground" Value="#666666"/>
-                                        <Setter Property="FontWeight" Value="SemiBold"/>
-                                        <Setter Property="FontSize" Value="13"/>
-                                        <Setter Property="Padding" Value="15,10"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                        <Setter Property="BorderBrush" Value="#E0E0E0"/>
-                                    </Style>
-                                </DataGrid.ColumnHeaderStyle>
+                            <Border Grid.Row="1" CornerRadius="10" 
+                                    BorderBrush="#E0E0E0" BorderThickness="1">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
 
-                                <DataGrid.RowStyle>
-                                    <Style TargetType="DataGridRow">
-                                        <Setter Property="Background" Value="White"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                        <Setter Property="BorderBrush" Value="#F0F0F0"/>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="#F8F9FA"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </DataGrid.RowStyle>
+                                    <!-- Table Header -->
+                                    <Border Grid.Row="0" Background="#EDF4F7" 
+                                            CornerRadius="10,10,0,0" Padding="25,18">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
 
-                                <DataGrid.CellStyle>
-                                    <Style TargetType="DataGridCell">
-                                        <Setter Property="BorderThickness" Value="0"/>
-                                        <Setter Property="Padding" Value="15,0"/>
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Foreground" Value="#333333"/>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter Property="Background" Value="Transparent"/>
-                                                <Setter Property="Foreground" Value="#333333"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </DataGrid.CellStyle>
+                                            <TextBlock Grid.Column="0" Text="Username ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                            <TextBlock Grid.Column="1" Text="Email ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                            <TextBlock Grid.Column="2" Text="ID Customer ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                            <TextBlock Grid.Column="3" Text="Alamat ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                            <TextBlock Grid.Column="4" Text="Telepon ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                            <TextBlock Grid.Column="5" Text="Tanggal ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                        </Grid>
+                                    </Border>
 
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="1.2*"/>
-                                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="1.5*"/>
-                                    <DataGridTextColumn Header="ID Customer" Binding="{Binding CustomerId}" Width="1*"/>
-                                    <DataGridTextColumn Header="Alamat" Binding="{Binding Address}" Width="2*"/>
-                                    <DataGridTextColumn Header="Telepon" Binding="{Binding Phone}" Width="1.2*"/>
-                                    <DataGridTextColumn Header="Tanggal" Binding="{Binding Date, StringFormat=dd MMM yyyy}" Width="1*"/>
-                                    
-                                    <!-- Customer does not require verification column; removed -->
-                                </DataGrid.Columns>
-                            </DataGrid>
+                                    <!-- Table Content -->
+                                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl x:Name="CustomerList" Margin="25,15">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border BorderBrush="#E8EEF2" BorderThickness="0,0,0,1" Padding="0,18">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <TextBlock Grid.Column="0" Text="{Binding Username}" 
+                                                                       FontSize="14" FontWeight="Medium" VerticalAlignment="Center" Foreground="#1A1A1A" HorizontalAlignment="Left"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding Email}" 
+                                                                       FontSize="13" VerticalAlignment="Center" Foreground="#2C3E50" HorizontalAlignment="Left"/>
+                                                            <TextBlock Grid.Column="2" Text="{Binding CustomerId}" 
+                                                                       FontSize="13" VerticalAlignment="Center" Foreground="#3B7D98" HorizontalAlignment="Left"/>
+                                                            <TextBlock Grid.Column="3" Text="{Binding Address}" 
+                                                                       FontSize="13" VerticalAlignment="Center" Foreground="#2C3E50" HorizontalAlignment="Left"/>
+                                                            <TextBlock Grid.Column="4" Text="{Binding Phone}" 
+                                                                       FontSize="13" VerticalAlignment="Center" Foreground="#5A6C7D" HorizontalAlignment="Left"/>
+                                                            <TextBlock Grid.Column="5" Text="{Binding Date, StringFormat=dd MMM yyyy}" 
+                                                                       FontSize="13" VerticalAlignment="Center" Foreground="#5A6C7D" HorizontalAlignment="Left"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
 
                             <!-- Pagination -->
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
@@ -327,112 +328,92 @@
                             </Grid>
 
                             <!-- Kapal List -->
-                            <DataGrid x:Name="KapalList" Grid.Row="1"
-                                      AutoGenerateColumns="False"
-                                      CanUserAddRows="False"
-                                      CanUserDeleteRows="False"
-                                      CanUserResizeRows="False"
-                                      CanUserSortColumns="True"
-                                      IsReadOnly="True"
-                                      HeadersVisibility="Column"
-                                      GridLinesVisibility="None"
-                                      BorderThickness="0"
-                                      Background="White"
-                                      RowHeight="50"
-                                      FontSize="14"
-                                      SelectionChanged="KapalList_SelectionChanged">
-                                
-                                <DataGrid.ColumnHeaderStyle>
-                                    <Style TargetType="DataGridColumnHeader">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Foreground" Value="#666666"/>
-                                        <Setter Property="FontWeight" Value="SemiBold"/>
-                                        <Setter Property="FontSize" Value="13"/>
-                                        <Setter Property="Padding" Value="15,10"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                        <Setter Property="BorderBrush" Value="#E0E0E0"/>
-                                    </Style>
-                                </DataGrid.ColumnHeaderStyle>
+                            <Border Grid.Row="1" CornerRadius="10" 
+                                    BorderBrush="#E0E0E0" BorderThickness="1">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
 
-                                <DataGrid.RowStyle>
-                                    <Style TargetType="DataGridRow">
-                                        <Setter Property="Background" Value="White"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                        <Setter Property="BorderBrush" Value="#F0F0F0"/>
-                                        <Setter Property="Cursor" Value="Hand"/>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="#F8F9FA"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </DataGrid.RowStyle>
+                                    <!-- Table Header -->
+                                    <Border Grid.Row="0" Background="#EDF4F7" 
+                                            CornerRadius="10,10,0,0" Padding="25,18">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
 
-                                <DataGrid.CellStyle>
-                                    <Style TargetType="DataGridCell">
-                                        <Setter Property="BorderThickness" Value="0"/>
-                                        <Setter Property="Padding" Value="15,0"/>
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Foreground" Value="#333333"/>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter Property="Background" Value="Transparent"/>
-                                                <Setter Property="Foreground" Value="#333333"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </DataGrid.CellStyle>
+                                            <TextBlock Grid.Column="0" Text="Nama Kapal ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                            <TextBlock Grid.Column="1" Text="Lokasi Saat Ini ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                            <TextBlock Grid.Column="2" Text="ID Kapal ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                            <TextBlock Grid.Column="3" Text="No. Registrasi ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                            <TextBlock Grid.Column="4" Text="Kapasitas ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                            <TextBlock Grid.Column="5" Text="Tujuan ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                            <TextBlock Grid.Column="6" Text="Aksi ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                        </Grid>
+                                    </Border>
 
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nama Kapal ◊" Binding="{Binding NamaKapal}" Width="1.2*"/>
-                                    <DataGridTextColumn Header="Lokasi Saat Ini" Binding="{Binding LokasiSekarang}" Width="1.2*"/>
-                                    <DataGridTextColumn Header="ID Kapal ◊" Binding="{Binding IdKapal}" Width="0.8*"/>
-                                    <DataGridTextColumn Header="Nomor Registrasi ◊" Binding="{Binding NomorRegistrasi}" Width="1.5*"/>
-                                    <DataGridTextColumn Header="Kapasitas ◊" Binding="{Binding Kapasitas}" Width="1*"/>
-                                    <DataGridTextColumn Header="Tujuan ◊" Binding="{Binding Tujuan}" Width="1.2*"/>
-                                    
-                                    <DataGridTemplateColumn Header="Aksi" Width="1*">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                    <!-- Delete -->
-                                                    <Button Background="#F44336" BorderThickness="0" 
-                                                            Width="30" Height="30" Margin="5,0"
-                                                            Cursor="Hand" ToolTip="Delete"
-                                                            Click="BtnDeleteKapal_Click">
-                                                        <Button.Template>
-                                                            <ControlTemplate>
-                                                                <Border Background="{TemplateBinding Background}" 
-                                                                        CornerRadius="6">
-                                                                    <TextBlock Text="✕" Foreground="White" 
-                                                                               FontSize="16" FontWeight="Bold"
-                                                                               HorizontalAlignment="Center" 
-                                                                               VerticalAlignment="Center"/>
-                                                                </Border>
-                                                            </ControlTemplate>
-                                                        </Button.Template>
-                                                    </Button>
-                                                    
-                                                    <!-- Open detail (chevron/right arrow) -->
-                                                    <Button Background="#E3F2FD" BorderThickness="0"
-                                                            Width="30" Height="30" Margin="5,0"
-                                                            Cursor="Hand" ToolTip="Lihat Detail"
-                                                            Click="BtnOpenKapalDetail_Click">
-                                                        <Button.Template>
-                                                            <ControlTemplate>
-                                                                <Border Background="{TemplateBinding Background}" CornerRadius="6">
-                                                                    <TextBlock Text="›" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                                </Border>
-                                                            </ControlTemplate>
-                                                        </Button.Template>
-                                                    </Button>
+                                    <!-- Table Content -->
+                                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl x:Name="KapalList" Margin="25,15">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border BorderBrush="#E8EEF2" BorderThickness="0,0,0,1" Padding="0,18">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
 
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
+                                                            <TextBlock Grid.Column="0" Text="{Binding NamaKapal}" 
+                                                                       FontSize="14" FontWeight="Medium" VerticalAlignment="Center" Foreground="#1A1A1A" HorizontalAlignment="Left"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding LokasiSekarang}" 
+                                                                       FontSize="13" VerticalAlignment="Center" Foreground="#2C3E50" HorizontalAlignment="Left"/>
+                                                            <TextBlock Grid.Column="2" Text="{Binding IdKapal}" 
+                                                                       FontSize="13" VerticalAlignment="Center" Foreground="#3B7D98" HorizontalAlignment="Left"/>
+                                                            <TextBlock Grid.Column="3" Text="{Binding NomorRegistrasi}" 
+                                                                       FontSize="13" VerticalAlignment="Center" Foreground="#2C3E50" HorizontalAlignment="Left"/>
+                                                            <TextBlock Grid.Column="4" Text="{Binding Kapasitas}" 
+                                                                       FontSize="13" VerticalAlignment="Center" Foreground="#5A6C7D" HorizontalAlignment="Left"/>
+                                                            <TextBlock Grid.Column="5" Text="{Binding Tujuan}" 
+                                                                       FontSize="13" VerticalAlignment="Center" Foreground="#5A6C7D" HorizontalAlignment="Left"/>
+                                                            
+                                                            <!-- Action Buttons -->
+                                                            <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Left">
+                                                                <Button Content="📋" 
+                                                                        Background="Transparent" BorderThickness="0"
+                                                                        FontSize="18" Cursor="Hand"
+                                                                        ToolTip="Lihat Detail"
+                                                                        Click="BtnOpenKapalDetail_Click"
+                                                                        Tag="{Binding IdKapal}"
+                                                                        Margin="0,0,10,0"/>
+                                                                <Button Content="✕" 
+                                                                        Background="Transparent" BorderThickness="0"
+                                                                        FontSize="16" FontWeight="Bold" Cursor="Hand"
+                                                                        Foreground="#F44336"
+                                                                        ToolTip="Hapus"
+                                                                        Click="BtnDeleteKapal_Click"/>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
 
                             <!-- Pagination -->
                             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
