@@ -4,45 +4,37 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wpf.modules"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
-        Title="Register" Height="700" Width="650"
+        Title="Register" Height="835" Width="700"
         WindowStartupLocation="CenterScreen"
-        Background="#F5F5F5">
+        Background="#2C5F72"
+        FontFamily="Inter, Segoe UI, Arial">
 
     <Window.Resources>
         
         <Style x:Key="InputBoxStyle" TargetType="TextBox">
-            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="10,8"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
                         <Grid>
                             <TextBlock x:Name="Watermark" Text="{TemplateBinding Tag}" 
-                                       Foreground="#B0B0B0" VerticalAlignment="Center"
-                                       Margin="10,0,0,0" IsHitTestVisible="False"/>
-                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" 
-                                          Margin="10,0,0,0"/>
+                                       Foreground="Gray" VerticalAlignment="Center"
+                                       Margin="2,0,0,0" IsHitTestVisible="False"
+                                       Visibility="Collapsed"/>
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" />
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="Text" Value="">
-                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
-                            </Trigger>
-                            <Trigger Property="Text" Value="{x:Null}">
-                                <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
-                            </Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
                                     <Condition Property="Text" Value=""/>
                                 </MultiTrigger.Conditions>
                                 <Setter TargetName="Watermark" Property="Visibility" Value="Visible"/>
                             </MultiTrigger>
-                            <Trigger Property="IsFocused" Value="True">
-                                <Setter TargetName="Watermark" Property="Visibility" Value="Collapsed"/>
-                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -50,27 +42,20 @@
         </Style>
 
         <Style x:Key="PasswordBoxStyle" TargetType="PasswordBox">
-            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="10,8"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="PasswordBox">
                         <Grid>
                             <TextBlock x:Name="Watermark" Text="{TemplateBinding Tag}" 
-                                       Foreground="#B0B0B0" VerticalAlignment="Center"
-                                       Margin="10,0,0,0" IsHitTestVisible="False"
-                                       Visibility="Collapsed"/>
-                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" 
-                                          Margin="10,0,0,0"/>
+                                       Foreground="Gray" VerticalAlignment="Center"
+                                       Margin="2,0,0,0" IsHitTestVisible="False"
+                                       Visibility="Visible"/>
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" />
                         </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsFocused" Value="True">
-                                <Setter TargetName="Watermark" Property="Visibility" Value="Collapsed"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -108,65 +93,48 @@
     </Window.Resources>
 
     <Grid>
-        <Border Background="#E6F4F7" CornerRadius="15"/>
-
-        <Border Background="White" CornerRadius="15" 
-                Margin="50" 
-                Padding="40">
+        <Border Background="White" CornerRadius="0,0,15,15" Padding="40,40">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Header Section -->
-                <Border Grid.Row="0" Background="#1F4959" 
+                <!-- Header Section with Image -->
+                <Border Grid.Row="0" Background="#2C5F72" 
                         CornerRadius="10" 
-                        Padding="30,40"
-                        Margin="0,0,0,20">
-                    <StackPanel>
-                        <!-- Ship Icon Placeholder -->
-                        <Viewbox Width="120" Height="100" Margin="0,0,0,20">
-                            <Canvas Width="120" Height="100">
-                                <!-- Simple ship representation -->
-                                <Polygon Points="20,70 40,30 80,30 100,70" 
-                                         Fill="#7FC5D9" Stroke="#5BA5B8" StrokeThickness="2"/>
-                                <Rectangle Canvas.Left="35" Canvas.Top="40" 
-                                           Width="50" Height="30" 
-                                           Fill="#F39C6B" Stroke="#D97E52" StrokeThickness="2"/>
-                                <Polygon Points="60,20 65,40 55,40" Fill="#E85D4A"/>
-                                <!-- Water -->
-                                <Rectangle Canvas.Top="70" Width="120" Height="30" 
-                                           Fill="#7FC5D9" Opacity="0.5"/>
-                            </Canvas>
-                        </Viewbox>
-                        
-
+                        Padding="40"
+                        Margin="0,0,0,30">
+                    <StackPanel HorizontalAlignment="Center">
+                        <!-- Ship Image -->
+                        <Image Source="pack://application:,,,/images/kapal.png" 
+                               Width="300" Height="200" 
+                               Stretch="Uniform"
+                               Margin="0,0,0,0"/>
                     </StackPanel>
                 </Border>
 
                 <!-- Form Section -->
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                    <StackPanel>
+                <StackPanel Grid.Row="1">
                         
                         <TextBlock Text="Registrasikan Dirimu!"
                                    Foreground="#000000" FontSize="28" FontWeight="Bold"
-                                   HorizontalAlignment="Center" Margin="0,0,0,0"/>
-                        <TextBlock Text="Selamat Datang di SmartLogistic!"
-                                   Foreground="#666666" FontSize="14"
-                                   HorizontalAlignment="Center"/>
+                                   HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                        <TextBlock Text="Selamat Datang di SmartLogistic!!"
+                                   Foreground="#A0A0A0" FontSize="15"
+                                   HorizontalAlignment="Center" Margin="0,0,0,25"/>
                         
-                        <Grid Margin="0,40,0,25">
+                        <Grid Margin="0,0,0,20">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" BorderBrush="LightGray" BorderThickness="0,0,0,1" 
+                            <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" 
                                     VerticalAlignment="Center" Height="1"/>
-                            <TextBlock Grid.Column="1" Text="Silahkan Mengisi Data Diri Anda" 
-                                    Foreground="Gray" Margin="10,0"/>
-                            <Border Grid.Column="2" BorderBrush="LightGray" BorderThickness="0,0,0,1" 
+                            <TextBlock Grid.Column="1" Text="Silahkan mengisi data diri anda!!" 
+                                    Foreground="#A0A0A0" FontSize="13" Margin="15,0"/>
+                            <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" 
                                     VerticalAlignment="Center" Height="1"/>
                         </Grid>
                         
@@ -178,28 +146,34 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Border Grid.Column="0" Background="#F8F9FA" CornerRadius="8" Padding="0" Height="40">
+                            <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="10,8" Height="45">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="👤" Grid.Column="0" VerticalAlignment="Center" 
-                                               FontSize="16" Margin="10,0,5,0"/>
+                                    <iconPacks:PackIconMaterial Kind="Account" Grid.Column="0" 
+                                                                Width="20" Height="20" 
+                                                                VerticalAlignment="Center" 
+                                                                Margin="0,0,10,0" 
+                                                                Foreground="#B0B0B0"/>
                                     <TextBox x:Name="txtNama" Grid.Column="1" 
                                              Tag="Nama" 
                                              Style="{StaticResource InputBoxStyle}"/>
                                 </Grid>
                             </Border>
 
-                            <Border Grid.Column="2" Background="#F8F9FA" CornerRadius="8" Padding="0" Height="40">
+                            <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="10,8" Height="45">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="👤" Grid.Column="0" VerticalAlignment="Center" 
-                                               FontSize="16" Margin="10,0,5,0"/>
+                                    <iconPacks:PackIconMaterial Kind="AccountOutline" Grid.Column="0" 
+                                                                Width="20" Height="20" 
+                                                                VerticalAlignment="Center" 
+                                                                Margin="0,0,10,0" 
+                                                                Foreground="#B0B0B0"/>
                                     <TextBox x:Name="txtUsername" Grid.Column="1" 
                                              Tag="Username" 
                                              Style="{StaticResource InputBoxStyle}"/>
@@ -215,34 +189,43 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Border Grid.Column="0" Background="#F8F9FA" CornerRadius="8" Padding="0" Height="40">
+                            <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="10,8" Height="45">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="📧" Grid.Column="0" VerticalAlignment="Center" 
-                                               FontSize="16" Margin="10,0,5,0"/>
+                                    <iconPacks:PackIconMaterial Kind="EmailOutline" Grid.Column="0" 
+                                                                Width="20" Height="20" 
+                                                                VerticalAlignment="Center" 
+                                                                Margin="0,0,10,0" 
+                                                                Foreground="#B0B0B0"/>
                                     <TextBox x:Name="txtEmail" Grid.Column="1" 
                                              Tag="Email" 
                                              Style="{StaticResource InputBoxStyle}"/>
                                 </Grid>
                             </Border>
 
-                            <Border Grid.Column="2" Background="#F8F9FA" CornerRadius="8" Padding="0" Height="40">
+                            <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="10,8" Height="45">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="🔒" Grid.Column="0" VerticalAlignment="Center" 
-                                               FontSize="16" Margin="10,0,5,0"/>
+                                    <iconPacks:PackIconMaterial Kind="LockOutline" Grid.Column="0" 
+                                                                Width="20" Height="20" 
+                                                                VerticalAlignment="Center" 
+                                                                Margin="0,0,10,0" 
+                                                                Foreground="#B0B0B0"/>
                                     <PasswordBox x:Name="txtPassword" Grid.Column="1" 
                                                  Tag="Password" 
                                                  Style="{StaticResource PasswordBoxStyle}"/>
-                                    <TextBlock Text="👁️" Grid.Column="2" VerticalAlignment="Center" 
-                                               FontSize="16" Cursor="Hand" Margin="0,0,10,0"/>
+                                    <iconPacks:PackIconMaterial Kind="EyeOffOutline" Grid.Column="2" 
+                                                                Width="20" Height="20" 
+                                                                VerticalAlignment="Center" 
+                                                                Cursor="Hand" 
+                                                                Foreground="#B0B0B0"/>
                                 </Grid>
                             </Border>
                         </Grid>
@@ -255,28 +238,34 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Border Grid.Column="0" Background="#F8F9FA" CornerRadius="8" Padding="0" Height="40">
+                            <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="10,8" Height="45">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="📞" Grid.Column="0" VerticalAlignment="Center" 
-                                               FontSize="16" Margin="10,0,5,0"/>
+                                    <iconPacks:PackIconMaterial Kind="Phone" Grid.Column="0" 
+                                                                Width="20" Height="20" 
+                                                                VerticalAlignment="Center" 
+                                                                Margin="0,0,10,0" 
+                                                                Foreground="#B0B0B0"/>
                                     <TextBox x:Name="txtTelepon" Grid.Column="1" 
                                              Tag="Telepon" 
                                              Style="{StaticResource InputBoxStyle}"/>
                                 </Grid>
                             </Border>
 
-                            <Border Grid.Column="2" Background="#F8F9FA" CornerRadius="8" Padding="0" Height="40">
+                            <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="10,8" Height="45">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="📍" Grid.Column="0" VerticalAlignment="Center" 
-                                               FontSize="16" Margin="10,0,5,0"/>
+                                    <iconPacks:PackIconMaterial Kind="MapMarker" Grid.Column="0" 
+                                                                Width="20" Height="20" 
+                                                                VerticalAlignment="Center" 
+                                                                Margin="0,0,10,0" 
+                                                                Foreground="#B0B0B0"/>
                                     <TextBox x:Name="txtAlamat" Grid.Column="1" 
                                              Tag="Alamat" 
                                              Style="{StaticResource InputBoxStyle}"/>
@@ -285,18 +274,19 @@
                         </Grid>
 
                         <!-- Link to Login -->
-                        <TextBlock HorizontalAlignment="Center" Margin="0,15,0,0">
-                            <Run Text="Sudah punya akun?" Foreground="Gray"/>
+                        <TextBlock HorizontalAlignment="Center" Margin="0,20,0,0" FontSize="13">
+                            <Run Text="Sudah punya akun?" Foreground="#808080"/>
                             <Hyperlink Click="GoToLogin_Click" TextDecorations="None">
-                                <Run Text="Login di sini" FontWeight="Bold" Foreground="#1F4959"/>
+                                <Run Text="Login disini" FontWeight="SemiBold" Foreground="#2C5F72"/>
                             </Hyperlink>
                         </TextBlock>
 
                         <!-- Register Button -->
                         <Button x:Name="btnRegistrasi" 
                                 Content="Registrasi" 
-                                Margin="0,15,0,0"
-                                Height="45"
+                                Margin="0,20,0,0"
+                                Height="50"
+                                Background="#2C5F72"
                                 Style="{StaticResource RegisterButtonStyle}"
                                 Click="BtnRegistrasi_Click"/>
 
@@ -304,7 +294,6 @@
                         <Button x:Name="btnCancel" IsCancel="True" Click="BtnCancel_Click" 
                                 Visibility="Collapsed"/>
                     </StackPanel>
-                </ScrollViewer>
             </Grid>
         </Border>
     </Grid>
