@@ -72,18 +72,16 @@ namespace wpf.modules
                             kapalName = string.Empty;
                         }
 
-                        // Map status to color (basic)
-                        string status = p.StatusPengiriman ?? string.Empty;
-                        string statusColor = "#90EE90"; // default green
-                        if (
-                            status.Equals("Proses", StringComparison.OrdinalIgnoreCase)
-                            || status.Equals("Diproses", StringComparison.OrdinalIgnoreCase)
-                        )
-                            statusColor = "#FFD700"; // gold
-                        else if (status.Equals("Ditunda", StringComparison.OrdinalIgnoreCase))
-                            statusColor = "#FFA07A"; // light salmon
-                        else if (status.Equals("Selesai", StringComparison.OrdinalIgnoreCase))
-                            statusColor = "#90EE90"; // green
+                        // Map status to color (matching admin dashboard)
+                        string status = p.StatusPengiriman ?? "Pending";
+                        string statusColor = status.ToLower() switch
+                        {
+                            "proses" => "#FFF3CD",
+                            "diproses" => "#FFF3CD",
+                            "selesai" => "#D1F4E0",
+                            "dibatalkan" => "#F8D7DA",
+                            _ => "#FFE5D1", // Pending
+                        };
 
                         DaftarPengiriman.Add(
                             new PengirimanItem
@@ -276,7 +274,7 @@ namespace wpf.modules
                     NamaKapal = "Samudra Raya",
                     TanggalDibuat = "13 Mei 2025",
                     Status = "Selesai",
-                    StatusColor = "#90EE90",
+                    StatusColor = "#D1F4E0",
                     Estimasi = "19 Mei 2025",
                     Detail = "View",
                 }
@@ -291,7 +289,7 @@ namespace wpf.modules
                     NamaKapal = "Lautan Perkasa",
                     TanggalDibuat = "30 Jan 2025",
                     Status = "Proses",
-                    StatusColor = "#FFD700",
+                    StatusColor = "#FFF3CD",
                     Estimasi = "06 Jul 2025",
                     Detail = "View",
                 }
@@ -306,7 +304,7 @@ namespace wpf.modules
                     NamaKapal = "Mentari Jawi",
                     TanggalDibuat = "18 Sep 2025",
                     Status = "Selesai",
-                    StatusColor = "#90EE90",
+                    StatusColor = "#D1F4E0",
                     Estimasi = "26 Sep 2025",
                     Detail = "View",
                 }
@@ -321,7 +319,7 @@ namespace wpf.modules
                     NamaKapal = "Binar Emas",
                     TanggalDibuat = "04 Mar 2025",
                     Status = "Proses",
-                    StatusColor = "#FFD700",
+                    StatusColor = "#FFF3CD",
                     Estimasi = "10 Mar 2025",
                     Detail = "View",
                 }
@@ -335,8 +333,8 @@ namespace wpf.modules
                     Berat = "18 Ton",
                     NamaKapal = "Angin Timur",
                     TanggalDibuat = "02 Okt 2025",
-                    Status = "Ditunda",
-                    StatusColor = "#FFA07A",
+                    Status = "Pending",
+                    StatusColor = "#FFE5D1",
                     Estimasi = "12 Okt 2025",
                     Detail = "View",
                 }
@@ -351,7 +349,7 @@ namespace wpf.modules
                     NamaKapal = "Bintang Laut",
                     TanggalDibuat = "14 Feb 2025",
                     Status = "Selesai",
-                    StatusColor = "#90EE90",
+                    StatusColor = "#D1F4E0",
                     Estimasi = "24 Feb 2025",
                     Detail = "View",
                 }
@@ -366,7 +364,7 @@ namespace wpf.modules
                     NamaKapal = "Cahaya Samudera",
                     TanggalDibuat = "20 Nov 2025",
                     Status = "Selesai",
-                    StatusColor = "#90EE90",
+                    StatusColor = "#D1F4E0",
                     Estimasi = "30 Nov 2025",
                     Detail = "View",
                 }
@@ -380,8 +378,8 @@ namespace wpf.modules
                     Berat = "9 Ton",
                     NamaKapal = "Harapan Baru",
                     TanggalDibuat = "07 Jan 2025",
-                    Status = "Ditunda",
-                    StatusColor = "#FFA07A",
+                    Status = "Dibatalkan",
+                    StatusColor = "#F8D7DA",
                     Estimasi = "16 Jan 2025",
                     Detail = "View",
                 }
@@ -396,7 +394,7 @@ namespace wpf.modules
                     NamaKapal = "Likid Nusantara",
                     TanggalDibuat = "25 Des 2025",
                     Status = "Selesai",
-                    StatusColor = "#90EE90",
+                    StatusColor = "#D1F4E0",
                     Estimasi = "04 Mar 2025",
                     Detail = "View",
                 }

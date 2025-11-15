@@ -1,4 +1,3 @@
-
 using System;
 
 namespace wpf.models;
@@ -68,15 +67,22 @@ public class Pengiriman
         if (string.IsNullOrWhiteSpace(newStatus))
             throw new ArgumentException("Status tidak boleh kosong");
 
-        string[] validStatuses = { "Pending", "Diproses", "Selesai", "Dibatalkan" };
+        string[] validStatuses = { "Pending", "Proses", "Diproses", "Selesai", "Dibatalkan" };
 
-        if (!Array.Exists(validStatuses, s => s.Equals(newStatus, StringComparison.OrdinalIgnoreCase)))
+        if (
+            !Array.Exists(
+                validStatuses,
+                s => s.Equals(newStatus, StringComparison.OrdinalIgnoreCase)
+            )
+        )
         {
             throw new ArgumentException($"Status '{newStatus}' tidak valid");
         }
 
         StatusPengiriman = newStatus;
-        Console.WriteLine($"Status pengiriman {PengirimanId} diperbarui menjadi: {StatusPengiriman}");
+        Console.WriteLine(
+            $"Status pengiriman {PengirimanId} diperbarui menjadi: {StatusPengiriman}"
+        );
     }
 
     // ENCAPSULATION: Public method untuk update lokasi dengan validation
@@ -116,8 +122,8 @@ public class Pengiriman
     // Method untuk tracking info
     public string GetTrackingInfo()
     {
-        return $"Pengiriman #{PengirimanId} - Status: {StatusPengiriman}, Lokasi: {LokasiSaatIni}, " +
-               $"Estimasi Tiba: {TanggalSelesaiEstimasi:dd/MM/yyyy}";
+        return $"Pengiriman #{PengirimanId} - Status: {StatusPengiriman}, Lokasi: {LokasiSaatIni}, "
+            + $"Estimasi Tiba: {TanggalSelesaiEstimasi:dd/MM/yyyy}";
     }
 
     public DateTime GetLastUpdated()
@@ -130,17 +136,17 @@ public class Pengiriman
         Console.WriteLine("╔════════════════════════════════════════╗");
         Console.WriteLine("║      LAPORAN PENGIRIMAN DETAIL         ║");
         Console.WriteLine("╠════════════════════════════════════════╣");
-        Console.WriteLine($"║ ID Pengiriman    : {PengirimanId,-20}║");
+        Console.WriteLine($"║ ID Pengiriman    : {PengirimanId, -20}║");
         Console.WriteLine($"║ Tanggal Mulai    : {TanggalMulai:dd/MM/yyyy HH:mm,-20}║");
         Console.WriteLine($"║ Estimasi Selesai : {TanggalSelesaiEstimasi:dd/MM/yyyy,-20}║");
-        Console.WriteLine($"║ Status           : {StatusPengiriman,-20}║");
-        Console.WriteLine($"║ Lokasi Saat Ini  : {LokasiSaatIni,-20}║");
-        Console.WriteLine($"║ Customer ID      : {CustomerId,-20}║");
-        Console.WriteLine($"║ Kapal ID         : {KapalId,-20}║");
-        Console.WriteLine($"║ Nama Barang      : {NamaBarang,-20}║");
-        Console.WriteLine($"║ Berat (kg)       : {BeratKg,-20}║");
-        Console.WriteLine($"║ Tipe Pengiriman  : {GetShipmentType(),-20}║");
-        Console.WriteLine($"║ Biaya Total      : Rp {CalculateCost(),-17:N0}║");
+        Console.WriteLine($"║ Status           : {StatusPengiriman, -20}║");
+        Console.WriteLine($"║ Lokasi Saat Ini  : {LokasiSaatIni, -20}║");
+        Console.WriteLine($"║ Customer ID      : {CustomerId, -20}║");
+        Console.WriteLine($"║ Kapal ID         : {KapalId, -20}║");
+        Console.WriteLine($"║ Nama Barang      : {NamaBarang, -20}║");
+        Console.WriteLine($"║ Berat (kg)       : {BeratKg, -20}║");
+        Console.WriteLine($"║ Tipe Pengiriman  : {GetShipmentType(), -20}║");
+        Console.WriteLine($"║ Biaya Total      : Rp {CalculateCost(), -17:N0}║");
         Console.WriteLine($"║ Terakhir Update  : {_lastUpdated:dd/MM/yyyy HH:mm,-20}║");
         Console.WriteLine("╚════════════════════════════════════════╝");
     }

@@ -19,6 +19,9 @@ namespace wpf.modules
         public ObservableCollection<KapalData> Kapals { get; set; } =
             new ObservableCollection<KapalData>();
 
+        // Store customer IsVerified status
+        private Dictionary<string, bool> customerVerifiedStatus = new Dictionary<string, bool>();
+
         public AdminView()
         {
             InitializeComponent();
@@ -41,11 +44,14 @@ namespace wpf.modules
                 string? adminEmail = Application.Current.Properties.Contains("CurrentUserEmail")
                     ? Application.Current.Properties["CurrentUserEmail"] as string
                     : null;
+
+                // Load admins once for both user info and verification status
+                var allAdmins = await db.GetAllAdminsAsync();
+
                 if (!string.IsNullOrEmpty(adminEmail))
                 {
                     txtUserEmail.Text = adminEmail;
-                    var admins = await db.GetAllAdminsAsync();
-                    var current = admins.FirstOrDefault(a => a.Email == adminEmail);
+                    var current = allAdmins.FirstOrDefault(a => a.Email == adminEmail);
                     if (current != null)
                     {
                         txtUserName.Text = current.Nama ?? "Admin";
@@ -54,9 +60,15 @@ namespace wpf.modules
 
                 // Load real customers
                 Customers.Clear();
+                customerVerifiedStatus.Clear();
                 var customers = await db.GetAllCustomersAsync();
                 foreach (var c in customers)
                 {
+                    // Check if customer is verified (exists as Admin with IsVerified = true)
+                    var admin = allAdmins.FirstOrDefault(a => a.Email == c.Email);
+                    bool isVerified = admin?.IsVerified ?? false;
+                    customerVerifiedStatus[c.CustomerId.ToString()] = isVerified;
+
                     Customers.Add(
                         new CustomerData
                         {
@@ -85,13 +97,15 @@ namespace wpf.modules
                             Kapasitas = k.KapasitasTon.ToString() + " Ton",
                             Tujuan = k.LokasiTujuan ?? string.Empty,
                             LokasiSekarang = k.LokasiSekarang ?? string.Empty,
+                            StatusVerifikasi = k.StatusVerifikasi ?? "Pending",
                         }
                     );
                 }
 
-                // Update totals
+                // Update totals and verified counts
                 txtTotal.Text = Customers.Count.ToString();
                 txtTotalKapal.Text = Kapals.Count.ToString();
+                UpdateVerifiedCount();
             }
             catch (Exception ex)
             {
@@ -236,6 +250,25 @@ namespace wpf.modules
             txtTotal.Text = Customers.Count.ToString();
         }
 
+        // Update verified count display based on active tab
+        private void UpdateVerifiedCount()
+        {
+            if (CustomerContent.Visibility == Visibility.Visible)
+            {
+                // Show verified customers count
+                int verifiedCount = customerVerifiedStatus.Values.Count(v => v);
+                txtVerifiedCount.Text = verifiedCount.ToString();
+                txtTotalCount.Text = Customers.Count.ToString();
+            }
+            else
+            {
+                // Show verified kapals count
+                int verifiedKapals = Kapals.Count(k => k.StatusVerifikasi == "Verified");
+                txtVerifiedCount.Text = verifiedKapals.ToString();
+                txtTotalCount.Text = Kapals.Count.ToString();
+            }
+        }
+
         // Event handler untuk tab Customer
         private void BtnCustomerTab_Click(object sender, RoutedEventArgs e)
         {
@@ -246,6 +279,9 @@ namespace wpf.modules
             // Show customer content, hide kapal content
             CustomerContent.Visibility = Visibility.Visible;
             KapalContent.Visibility = Visibility.Collapsed;
+
+            // Update verified count for customer tab
+            UpdateVerifiedCount();
         }
 
         // Event handler untuk tab Kapal
@@ -258,6 +294,9 @@ namespace wpf.modules
             // Show kapal content, hide customer content
             CustomerContent.Visibility = Visibility.Collapsed;
             KapalContent.Visibility = Visibility.Visible;
+
+            // Update verified count for kapal tab
+            UpdateVerifiedCount();
         }
 
         // Load data kapal (dummy data untuk saat ini)
@@ -550,5 +589,6 @@ namespace wpf.modules
         public string Kapasitas { get; set; } = string.Empty;
         public string Tujuan { get; set; } = string.Empty;
         public string LokasiSekarang { get; set; } = string.Empty;
+        public string StatusVerifikasi { get; set; } = "Pending";
     }
 }
