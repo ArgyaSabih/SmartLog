@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wpf.modules"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         Title="SmartLogistic - Admin" 
         WindowState="Maximized"
@@ -392,19 +393,26 @@
                                                             
                                                             <!-- Action Buttons -->
                                                             <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Left">
-                                                                <Button Content="📋" 
-                                                                        Background="Transparent" BorderThickness="0"
-                                                                        FontSize="18" Cursor="Hand"
+                                                                <Button Background="Transparent" BorderThickness="0"
+                                                                        Cursor="Hand"
+                                                                        ToolTip="Hapus"
+                                                                        Click="BtnDeleteKapal_Click"
+                                                                        Margin="0,0,10,0"
+                                                                        Padding="5">
+                                                                    <iconPacks:PackIconMaterial Kind="Close" 
+                                                                                                Width="20" Height="20" 
+                                                                                                Foreground="#F44336"/>
+                                                                </Button>
+                                                                <Button Background="Transparent" BorderThickness="0"
+                                                                        Cursor="Hand"
                                                                         ToolTip="Lihat Detail"
                                                                         Click="BtnOpenKapalDetail_Click"
                                                                         Tag="{Binding IdKapal}"
-                                                                        Margin="0,0,10,0"/>
-                                                                <Button Content="✕" 
-                                                                        Background="Transparent" BorderThickness="0"
-                                                                        FontSize="16" FontWeight="Bold" Cursor="Hand"
-                                                                        Foreground="#F44336"
-                                                                        ToolTip="Hapus"
-                                                                        Click="BtnDeleteKapal_Click"/>
+                                                                        Padding="5">
+                                                                    <iconPacks:PackIconMaterial Kind="FileDocumentOutline" 
+                                                                                                Width="20" Height="20" 
+                                                                                                Foreground="#000000"/>
+                                                                </Button>
                                                             </StackPanel>
                                                         </Grid>
                                                     </Border>

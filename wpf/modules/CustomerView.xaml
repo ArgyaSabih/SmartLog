@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wpf.modules"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         Title="SmartLogistic - Customer Dashboard" 
         WindowState="Maximized"
@@ -270,13 +271,18 @@
                                                            FontSize="12" VerticalAlignment="Center" Foreground="#5A6C7D" HorizontalAlignment="Left"/>
                                                 
                                                 <!-- Detail Button -->
-                                                <Button Grid.Column="7" Content="📋" 
+                                                <Button Grid.Column="7" 
                                                         Background="Transparent" BorderThickness="0"
-                                                        FontSize="18" Cursor="Hand"
+                                                        Cursor="Hand"
                                                         ToolTip="Lihat Detail"
                                                         Click="BtnDetailPengiriman_Click"
                                                         Tag="{Binding PengirimanId}"
-                                                        HorizontalAlignment="Left"/>
+                                                        HorizontalAlignment="Left"
+                                                        Padding="5">
+                                                    <iconPacks:PackIconMaterial Kind="FileDocumentOutline" 
+                                                                                Width="20" Height="20" 
+                                                                                Foreground="#000000"/>
+                                                </Button>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
