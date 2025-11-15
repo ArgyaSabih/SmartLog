@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:local="clr-namespace:wpf.modules"
         mc:Ignorable="d"
         Title="Login" Height="600" Width="900"
@@ -157,8 +158,9 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="📧" Grid.Column="0" VerticalAlignment="Center" 
-                                       FontSize="16" Margin="0,0,10,0"/>
+                            <!-- <TextBlock Text="📧" Grid.Column="0" VerticalAlignment="Center" 
+                                       FontSize="16" Margin="0,0,10,0"/> -->
+                            <iconPacks:PackIconMaterial Kind="EmailOutline" Width="20" Height="20" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="Gray"/>
                             <TextBox x:Name="txtEmail" Grid.Column="1" 
                                      Tag="Email" 
                                      Style="{StaticResource InputBoxStyle}"/>
@@ -172,15 +174,13 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="🔒" Grid.Column="0" VerticalAlignment="Center" 
-                                       FontSize="16" Margin="0,0,10,0"/>
+                            <iconPacks:PackIconMaterial Kind="LockOutline" Width="20" Height="20" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="Gray"/>
                             
                             <PasswordBox x:Name="txtPassword" Grid.Column="1" 
                                          Tag="Password" 
                                          Style="{StaticResource PasswordBoxStyle}"/>
                             
-                            <TextBlock Text="👁️" Grid.Column="2" VerticalAlignment="Center" 
-                                       FontSize="16" Cursor="Hand"/>
+                            <iconPacks:PackIconMaterial Kind="EyeOutline" Width="20" Height="20" Grid.Column="2" VerticalAlignment="Center" Margin="0,0,0,0" Cursor="Hand" Foreground="Gray"/>
                         </Grid>
                     </Border>
                     
