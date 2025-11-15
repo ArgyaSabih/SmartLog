@@ -310,14 +310,16 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock Grid.Column="0" Text="ID Barang ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Column="1" Text="Nama Barang ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Column="2" Text="Berat ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
                                         <TextBlock Grid.Column="3" Text="Customer ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
-                                        <TextBlock Grid.Column="4" Text="Tanggal ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
-                                        <TextBlock Grid.Column="5" Text="Aksi ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="4" Text="Status ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="5" Text="Tanggal ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
+                                        <TextBlock Grid.Column="6" Text="Aksi ▼" FontWeight="SemiBold" FontSize="14" Foreground="#2C5F6F" HorizontalAlignment="Left"/>
                                     </Grid>
                                 </Border>
 
@@ -335,6 +337,7 @@
                                                             <ColumnDefinition Width="*"/>
                                                             <ColumnDefinition Width="*"/>
                                                             <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="*"/>
                                                         </Grid.ColumnDefinitions>
 
                                                         <TextBlock Grid.Column="0" Text="{Binding IdBarang}" 
@@ -345,14 +348,25 @@
                                                                    FontSize="13" VerticalAlignment="Center" Foreground="#2C3E50" HorizontalAlignment="Left"/>
                                                         <TextBlock Grid.Column="3" Text="{Binding Customer}" 
                                                                    FontSize="13" VerticalAlignment="Center" Foreground="#2C3E50" HorizontalAlignment="Left"/>
-                                                        <TextBlock Grid.Column="4" Text="{Binding TanggalMasuk, StringFormat=dd MMM yyyy}" 
+                                                        
+                                                        <!-- Status Badge -->
+                                                        <Border Grid.Column="4" Background="{Binding StatusBackground}" 
+                                                                CornerRadius="12" Padding="10,4" 
+                                                                HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding Status}" 
+                                                                       FontSize="12" FontWeight="SemiBold" 
+                                                                       Foreground="{Binding StatusForeground}"/>
+                                                        </Border>
+                                                        
+                                                        <TextBlock Grid.Column="5" Text="{Binding TanggalMasuk, StringFormat=dd MMM yyyy}" 
                                                                    FontSize="13" VerticalAlignment="Center" Foreground="#5A6C7D" HorizontalAlignment="Left"/>
                                                         
                                                         <!-- Action Buttons -->
-                                                        <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Left">
+                                                        <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Left">
                                                             <Button Background="Transparent" BorderThickness="0"
                                                                     Cursor="Hand"
-                                                                    ToolTip="Hapus"
+                                                                    ToolTip="Batalkan Pengiriman"
+                                                                    Click="BtnDeleteBarang_Click"
                                                                     Margin="0,0,10,0"
                                                                     Padding="5">
                                                                 <iconPacks:PackIconMaterial Kind="Close" 
@@ -362,6 +376,7 @@
                                                             <Button Background="Transparent" BorderThickness="0"
                                                                     Cursor="Hand"
                                                                     ToolTip="Verifikasi"
+                                                                    Click="BtnVerifyBarang_Click"
                                                                     Margin="0,0,10,0"
                                                                     Padding="5">
                                                                 <iconPacks:PackIconMaterial Kind="Check" 

@@ -37,32 +37,47 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#666666"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="15,8"/>
-            <Setter Property="Margin" Value="0,0,5,0"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="Margin" Value="5,5,5,5"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
-                                Padding="{TemplateBinding Padding}"
-                                CornerRadius="8,8,0,0">
+                                Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#F0F0F0"/>
-                </Trigger>
-            </Style.Triggers>
         </Style>
 
-        <Style x:Key="ActiveTabButtonStyle" TargetType="Button" BasedOn="{StaticResource TabButtonStyle}">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="#1F4959"/>
+        <Style x:Key="ActiveTabButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#1b4965"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="Margin" Value="5,5,5,5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}"
+                                    Padding="{TemplateBinding Padding}"
+                                    CornerRadius="8,8,0,0">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <Rectangle Height="3" VerticalAlignment="Bottom"
+                                       Fill="#62b6cb" RadiusX="1.5" RadiusY="1.5"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         
         <!-- Action Button style -->
@@ -176,14 +191,44 @@
                 </Grid.RowDefinitions>
 
                 <!-- Tabs -->
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="30,20,30,0">
-                    <Button x:Name="btnCustomerTab" Content="Customer" 
-                            Style="{StaticResource ActiveTabButtonStyle}"
-                            Click="BtnCustomerTab_Click"/>
-                    <Button x:Name="btnKapalTab" Content="Kapal" 
-                            Style="{StaticResource TabButtonStyle}"
-                            Click="BtnKapalTab_Click"/>
-                </StackPanel>
+                <Border Grid.Row="0" Background="White" CornerRadius="10" 
+                        Margin="30,20,30,0" Padding="5">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="5" ShadowDepth="0" Opacity="0.08"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <!-- Tab Buttons -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <Button x:Name="btnCustomerTab" Content="Customer" 
+                                    Style="{StaticResource ActiveTabButtonStyle}"
+                                    Click="BtnCustomerTab_Click"/>
+                            <Button x:Name="btnKapalTab" Content="Kapal" 
+                                    Style="{StaticResource TabButtonStyle}"
+                                    Click="BtnKapalTab_Click"/>
+                        </StackPanel>
+                        
+                        <!-- Total Count -->
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                            <iconPacks:PackIconMaterial Kind="CheckCircle" 
+                                                        Width="16" Height="16" 
+                                                        Foreground="#62b6cb"
+                                                        VerticalAlignment="Center"
+                                                        Margin="0,0,8,0"/>
+                            <TextBlock VerticalAlignment="Center">
+                                <Run Text="Total: " FontSize="13" Foreground="#666666"/>
+                                <Run x:Name="txtVerifiedCount" Text="0" FontSize="13" FontWeight="Bold" Foreground="#62b6cb"/>
+                                <Run Text="/" FontSize="13" Foreground="#999999"/>
+                                <Run x:Name="txtTotalCount" Text="0" FontSize="13" Foreground="#999999"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </Border>
 
                 <!-- Content Area -->
                 <Border Grid.Row="1" Background="White" CornerRadius="10,10,10,10" 

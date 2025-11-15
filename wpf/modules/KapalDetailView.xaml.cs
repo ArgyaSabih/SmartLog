@@ -145,6 +145,7 @@ namespace wpf.modules
                             BeratKgValue = p.BeratKg,
                             Customer = p.CustomerId.ToString(),
                             TanggalMasuk = p.TanggalMulai,
+                            Status = p.StatusPengiriman ?? "Pending",
                         }
                     );
                 }
@@ -327,6 +328,120 @@ namespace wpf.modules
             }
         }
 
+        // Event handler untuk verifikasi barang (ubah status jadi "Proses")
+        private async void BtnVerifyBarang_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!(sender is FrameworkElement fe) || !(fe.DataContext is BarangData barangData))
+                    return;
+
+                var confirm = MessageBox.Show(
+                    $"Verifikasi barang '{barangData.NamaBarang}'?\n\nStatus pengiriman akan diubah menjadi 'Proses'.",
+                    "Konfirmasi Verifikasi",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
+                );
+
+                if (confirm != MessageBoxResult.Yes)
+                    return;
+
+                var db = App.GetService<wpf.services.PostgresService>();
+                var pengiriman = await db.GetPengirimanByIdAsync(barangData.PengirimanId);
+
+                if (pengiriman != null)
+                {
+                    pengiriman.UpdateStatus("Proses");
+                    await db.UpdatePengirimanAsync(pengiriman);
+
+                    MessageBox.Show(
+                        "Barang berhasil diverifikasi.\nStatus pengiriman diubah menjadi 'Proses'.",
+                        "Sukses",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+
+                    // Reload data to reflect changes
+                    await LoadBarangDataFromDbAsync();
+                }
+                else
+                {
+                    MessageBox.Show(
+                        "Data pengiriman tidak ditemukan.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Gagal memverifikasi barang: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
+        }
+
+        // Event handler untuk cancel barang
+        private async void BtnDeleteBarang_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!(sender is FrameworkElement fe) || !(fe.DataContext is BarangData barangData))
+                    return;
+
+                var confirm = MessageBox.Show(
+                    $"Batalkan pengiriman barang '{barangData.NamaBarang}'?\n\nStatus pengiriman akan diubah menjadi 'Dibatalkan'.",
+                    "Konfirmasi Pembatalan",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning
+                );
+
+                if (confirm != MessageBoxResult.Yes)
+                    return;
+
+                var db = App.GetService<wpf.services.PostgresService>();
+                var pengiriman = await db.GetPengirimanByIdAsync(barangData.PengirimanId);
+
+                if (pengiriman != null)
+                {
+                    pengiriman.UpdateStatus("Dibatalkan");
+                    await db.UpdatePengirimanAsync(pengiriman);
+
+                    MessageBox.Show(
+                        "Pengiriman barang berhasil dibatalkan.\nStatus diubah menjadi 'Dibatalkan'.",
+                        "Sukses",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+
+                    // Reload data to reflect changes
+                    await LoadBarangDataFromDbAsync();
+                }
+                else
+                {
+                    MessageBox.Show(
+                        "Data pengiriman tidak ditemukan.",
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Gagal membatalkan pengiriman: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
+        }
+
         // Removed BtnLihatKapasitas per request
 
         // Status modification removed from KapalDetailView (handled elsewhere or disabled)
@@ -346,5 +461,36 @@ namespace wpf.modules
 
         // numeric value in kilograms for calculations
         public decimal BeratKgValue { get; set; }
+
+        // Status properties
+        public string Status { get; set; } = "Pending";
+        public string StatusBackground
+        {
+            get
+            {
+                return Status?.ToLower() switch
+                {
+                    "proses" => "#FFF3CD",
+                    "diproses" => "#FFF3CD",
+                    "selesai" => "#D1F4E0",
+                    "dibatalkan" => "#F8D7DA",
+                    _ => "#FFE5D1", // Pending
+                };
+            }
+        }
+        public string StatusForeground
+        {
+            get
+            {
+                return Status?.ToLower() switch
+                {
+                    "proses" => "#8A6D00",
+                    "diproses" => "#8A6D00",
+                    "selesai" => "#1F7A3A",
+                    "dibatalkan" => "#7A1A1A",
+                    _ => "#CC5500", // Pending
+                };
+            }
+        }
     }
 }
