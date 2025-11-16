@@ -265,9 +265,59 @@ public class PostgresService
     /// </summary>
     public async Task<Kapal> UpdateKapalAsync(Kapal kapal)
     {
-        _db.Kapals.Update(kapal);
-        await _db.SaveChangesAsync();
-        return kapal;
+        if (kapal == null) throw new ArgumentNullException(nameof(kapal));
+
+        // Use a transaction so kapal update and related pengiriman location updates are atomic
+        using (var tx = await _db.Database.BeginTransactionAsync())
+        {
+            // Load existing kapal to detect location change
+            var existing = await _db.Kapals.AsNoTracking().FirstOrDefaultAsync(k => k.KapalId == kapal.KapalId);
+            string? oldLocation = existing?.LokasiSekarang;
+
+            // Update kapal
+            _db.Kapals.Update(kapal);
+            await _db.SaveChangesAsync();
+
+            // If lokasi changed and new location is non-empty, update pengiriman that are in processed state
+            if (!string.IsNullOrWhiteSpace(kapal.LokasiSekarang) && !string.Equals(oldLocation, kapal.LokasiSekarang, StringComparison.Ordinal))
+            {
+                // Consider these statuses as 'processed' (keep in sync with UI logic)
+                var processedStatuses = new[] { "Proses", "Diproses" };
+
+                var toUpdate = await _db.Pengirimans
+                    .Where(p => p.KapalId == kapal.KapalId && (p.StatusPengiriman == "Proses" || p.StatusPengiriman == "Diproses"))
+                    .ToListAsync();
+
+                bool kapalAtTujuan = string.Equals(kapal.LokasiSekarang?.Trim(), kapal.LokasiTujuan?.Trim(), StringComparison.OrdinalIgnoreCase);
+
+                foreach (var p in toUpdate)
+                {
+                    try
+                    {
+                        // kapal.LokasiSekarang is not null/whitespace here because we checked earlier
+                        p.UpdateLocation(kapal.LokasiSekarang!);
+                        if (kapalAtTujuan)
+                        {
+                            // mark processed pengiriman as finished when kapal reached its tujuan
+                            try { p.UpdateStatus("Selesai"); } catch { }
+                        }
+                        _db.Pengirimans.Update(p);
+                    }
+                    catch
+                    {
+                        // ignore individual update failures to continue bulk update; caller can inspect DB if needed
+                    }
+                }
+
+                if (toUpdate.Count > 0)
+                {
+                    await _db.SaveChangesAsync();
+                }
+            }
+
+            await tx.CommitAsync();
+            return kapal;
+        }
     }
 
     /// <summary>
@@ -355,11 +405,12 @@ public class PostgresService
                 throw new InvalidOperationException($"Kapal dengan ID {pengiriman.KapalId} tidak ditemukan.");
 
             // Sum existing pengiriman berat (kg) for this kapal
+            // Only consider pengirimans that are actively occupying capacity (e.g., "Proses" or "Diproses")
             decimal existingKg = 0m;
             try
             {
                 existingKg = await _db.Pengirimans
-                    .Where(p => p.KapalId == pengiriman.KapalId)
+                    .Where(p => p.KapalId == pengiriman.KapalId && (p.StatusPengiriman == "Proses" || p.StatusPengiriman == "Diproses"))
                     .SumAsync(p => (decimal?)p.BeratKg) ?? 0m;
             }
             catch

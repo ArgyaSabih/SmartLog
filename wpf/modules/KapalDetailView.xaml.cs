@@ -24,10 +24,26 @@ namespace wpf.modules
 
             // Set kapal info from provided data immediately
             txtKapalName.Text = kapal.NamaKapal;
-            txtCapacity.Text = kapal.Kapasitas.Replace(" Ton", "");
+            // Try to convert Kapasitas (e.g. "3 Ton") to kilograms for display
+            try
+            {
+                var raw = kapal.Kapasitas?.Replace(" Ton", "")?.Trim() ?? string.Empty;
+                if (decimal.TryParse(raw, out decimal ton))
+                {
+                    txtCapacity.Text = (ton * 1000m).ToString("G");
+                }
+                else
+                {
+                    txtCapacity.Text = kapal.Kapasitas.Replace(" Ton", "");
+                }
+            }
+            catch
+            {
+                txtCapacity.Text = kapal.Kapasitas.Replace(" Ton", "");
+            }
             // show unknown current location until we load real data; show tujuan from kapal data
             txtLokasiSekarang.Text = "-";
-            txtTujuan.Text = kapal.Tujuan ?? "-";
+            txtTujuan.Text = $"Tujuan: {kapal.Tujuan ?? "-"}";
 
             // Start async initialization (loads kapal and barang)
             _ = InitializeAsync();
@@ -58,10 +74,10 @@ namespace wpf.modules
                         () => txtKapalName.Text = _kapalModel.NamaKapal ?? _kapalData.NamaKapal
                     );
                     txtCapacity.Dispatcher.Invoke(
-                        () => txtCapacity.Text = _kapalModel.KapasitasTon.ToString("G")
+                        () => txtCapacity.Text = (_kapalModel.KapasitasTon * 1000m).ToString("G")
                     );
                     txtTujuan.Dispatcher.Invoke(
-                        () => txtTujuan.Text = _kapalModel.LokasiTujuan ?? "-"
+                        () => txtTujuan.Text = $"tujuan: {_kapalModel.LokasiTujuan ?? "-"}"
                     );
                     txtLokasiSekarang.Dispatcher.Invoke(
                         () => txtLokasiSekarang.Text = _kapalModel.LokasiSekarang ?? "-"
@@ -186,16 +202,17 @@ namespace wpf.modules
         {
             if (_kapalModel == null)
                 return;
-            // Sum berat barang in kg
-            decimal totalKg = Barangs.Sum(b => b.BeratKgValue);
+            // Sum berat barang in kg for items currently in 'Proses' status only (exclude Pending)
+            decimal totalKg = Barangs
+                .Where(b => string.Equals(b.Status, "Proses", StringComparison.OrdinalIgnoreCase))
+                .Sum(b => b.BeratKgValue);
             // kapal kapasitas in ton -> convert to kg
             decimal kapasitasKg = _kapalModel.KapasitasTon * 1000m;
             decimal sisaKg = kapasitasKg - totalKg;
             if (sisaKg < 0)
                 sisaKg = 0;
-            // show in tons with 3 decimals
-            decimal sisaTon = Math.Round(sisaKg / 1000m, 3);
-            txtCapacity.Text = sisaTon.ToString("G");
+            // show in kilograms
+            txtCapacity.Text = sisaKg.ToString("G");
         }
 
         private void BtnBack_Click(object sender, RoutedEventArgs e)
@@ -244,18 +261,60 @@ namespace wpf.modules
             }
         }
 
-        // Show location details (from DB if available)
-        private void BtnDetailLokasi_Click(object sender, RoutedEventArgs e)
+        // Show location details (from DB if available) and fetch weather from weatherapi.com
+        private async void BtnDetailLokasi_Click(object sender, RoutedEventArgs e)
         {
             string lokasi = _kapalModel?.LokasiSekarang ?? txtLokasiSekarang.Text;
-            string message =
-                $"Lokasi saat ini:\n{lokasi}\n\nStatus Verifikasi: {_kapalModel?.StatusVerifikasi ?? "Unknown"}";
-            MessageBox.Show(
-                message,
-                "Detail Lokasi",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information
-            );
+            string kota = (lokasi ?? string.Empty).Split(',')[0].Trim();
+
+            // Read API key from environment variable `API_KEY` (ensure .env is loaded in your environment)
+            string? apiKey = Environment.GetEnvironmentVariable("API_KEY");
+            if (string.IsNullOrWhiteSpace(apiKey))
+            {
+                string message =
+                    $"Lokasi saat ini:\n{lokasi}\n\nStatus Verifikasi: {_kapalModel?.StatusVerifikasi ?? "Unknown"}\n\n" +
+                    "API_KEY belum diset. Silakan tambahkan API_KEY Anda ke file .env atau environment variables.";
+                MessageBox.Show(message, "Detail Lokasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                using var client = new System.Net.Http.HttpClient();
+                var url = $"https://api.weatherapi.com/v1/current.json?key={System.Uri.EscapeDataString(apiKey)}&q={System.Uri.EscapeDataString(kota)}&aqi=no";
+                var resp = await client.GetAsync(url);
+                if (!resp.IsSuccessStatusCode)
+                {
+                    MessageBox.Show($"Gagal mengambil data cuaca: {resp.StatusCode}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                using var stream = await resp.Content.ReadAsStreamAsync();
+                using var doc = await System.Text.Json.JsonDocument.ParseAsync(stream);
+                var root = doc.RootElement;
+                var loc = root.GetProperty("location");
+                var cur = root.GetProperty("current");
+
+                string locName = loc.GetProperty("name").GetString() ?? kota;
+                string region = loc.GetProperty("region").GetString() ?? string.Empty;
+                string country = loc.GetProperty("country").GetString() ?? string.Empty;
+                string localtime = loc.GetProperty("localtime").GetString() ?? string.Empty;
+                decimal tempC = cur.GetProperty("temp_c").GetDecimal();
+                string condition = cur.GetProperty("condition").GetProperty("text").GetString() ?? string.Empty;
+                decimal windKph = cur.GetProperty("wind_kph").GetDecimal();
+                int humidity = cur.GetProperty("humidity").GetInt32();
+
+                string message =
+                    $"Lokasi saat ini:\n{locName}{(string.IsNullOrWhiteSpace(region) ? "" : ", " + region)}{(string.IsNullOrWhiteSpace(country) ? "" : ", " + country)}\nWaktu lokal: {localtime}\n\n" +
+                    $"Cuaca: {condition}\nSuhu: {tempC} °C\nKelembapan: {humidity}%\nKecepatan angin: {windKph} kph\n\n" +
+                    $"Status Verifikasi: {_kapalModel?.StatusVerifikasi ?? "Unknown"}";
+
+                MessageBox.Show(message, "Detail Lokasi & Cuaca", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Gagal mengambil detail lokasi/cuaca: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         // Update lokasi via small dialog and persist to DB
@@ -270,15 +329,43 @@ namespace wpf.modules
                 if (res == true && !string.IsNullOrWhiteSpace(dlg.LocationResult))
                 {
                     var newLoc = dlg.LocationResult!;
-                    // Confirm update
-                    var confirm = MessageBox.Show(
-                        $"Update lokasi kapal dari '{_kapalModel?.LokasiSekarang ?? txtLokasiSekarang.Text}' ke '{newLoc}'?",
-                        "Konfirmasi Update Lokasi",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Question
-                    );
-                    if (confirm != MessageBoxResult.Yes)
+                    // Before applying, compute affected pengirimans and total weight to show confirmation
+                    var dbPreview = App.GetService<wpf.services.PostgresService>();
+                    // Ensure kapal model is loaded
+                    if (_kapalModel == null)
+                    {
+                        if (long.TryParse(_kapalData.IdKapal, out long id))
+                        {
+                            _kapalModel = await dbPreview.GetKapalByIdAsync(id);
+                        }
+                    }
+
+                    if (_kapalModel == null)
+                    {
+                        MessageBox.Show("Gagal menemukan data kapal untuk pra-konfirmasi.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
+                    }
+
+                    var pengirimansPreview = await dbPreview.GetPengirimansByKapalIdAsync(_kapalModel.KapalId);
+                    var affected = pengirimansPreview.Where(p => string.Equals(p.StatusPengiriman ?? "", "Proses", StringComparison.OrdinalIgnoreCase) || string.Equals(p.StatusPengiriman ?? "", "Diproses", StringComparison.OrdinalIgnoreCase)).ToList();
+                    int countAffected = affected.Count;
+                    decimal totalKgAffected = affected.Sum(p => p.BeratKg);
+
+                    bool willMarkFinished = string.Equals(newLoc?.Trim(), _kapalModel.LokasiTujuan?.Trim(), StringComparison.OrdinalIgnoreCase);
+
+                    string curLocDisplay = _kapalModel.LokasiSekarang ?? "-";
+                    string msg = $"Lokasi kapal akan diubah dari '{curLocDisplay}' menjadi '{newLoc}'.\n\n" +
+                                 $"Pengiriman yang akan terpengaruh: {countAffected} barang\n" +
+                                 $"Total berat yang akan dibebaskan: {totalKgAffected} Kg ({Math.Round(totalKgAffected/1000m,3)} Ton)\n\n";
+                    if (willMarkFinished)
+                    {
+                        msg += "Karena lokasi baru sama dengan tujuan kapal, pengiriman yang diproses akan ditandai sebagai 'Selesai'.\n\n";
+                    }
+                    msg += "Lanjutkan update lokasi?";
+
+                    var confirm = MessageBox.Show(msg, "Konfirmasi Update Lokasi", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (confirm != MessageBoxResult.Yes) return;
+
                     // Update model
                     if (_kapalModel == null)
                     {
@@ -289,12 +376,14 @@ namespace wpf.modules
                             _kapalModel = await dbx.GetKapalByIdAsync(id);
                         }
                     }
-
                     if (_kapalModel != null)
                     {
                         _kapalModel.UpdateLokasi(newLoc);
                         var db = App.GetService<wpf.services.PostgresService>();
                         await db.UpdateKapalAsync(_kapalModel);
+
+                        // Refresh barang list so statuses/locations reflect cascade updates
+                        await LoadBarangDataFromDbAsync();
 
                         // Update UI
                         txtLokasiSekarang.Text = _kapalModel.LokasiSekarang ?? newLoc;
@@ -482,14 +571,8 @@ namespace wpf.modules
         {
             get
             {
-                return Status?.ToLower() switch
-                {
-                    "proses" => "#8A6D00",
-                    "diproses" => "#8A6D00",
-                    "selesai" => "#1F7A3A",
-                    "dibatalkan" => "#7A1A1A",
-                    _ => "#CC5500", // Pending
-                };
+                // Use a dark foreground for all statuses to ensure contrast over light badges
+                return "#222222";
             }
         }
     }

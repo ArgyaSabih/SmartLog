@@ -2,11 +2,11 @@
 
 ## Apa ini lah 💻
 
-| Jabatan           | Nama                                   | NIM                |
-|-------------------|----------------------------------------|--------------------|
-| Ketua Kelompok    | Polikarpus Arya Pradhanika             | 23/512404/TK/56325 |
-| Anggota 1         | Muhammad Rhizal Rhomadon               | 23/514719/TK/56511 |
-| Anggota 2         | Argya Sabih Elysio                     | 23/512630/TK/56335 |
+| Jabatan        | Nama                       | NIM                |
+| -------------- | -------------------------- | ------------------ |
+| Ketua Kelompok | Polikarpus Arya Pradhanika | 23/512404/TK/56325 |
+| Anggota 1      | Muhammad Rhizal Rhomadon   | 23/514719/TK/56511 |
+| Anggota 2      | Argya Sabih Elysio         | 23/512630/TK/56335 |
 
 <!-- ## Design 🎨
 
@@ -20,6 +20,16 @@ Masukan perintah berikut ke dalam terminal
 cd wpf
 dotnet run
 ```
+
+## How to Install 🥰
+
+Masukan perintah berikut
+
+```sh
+dotnet publish ./wpf/wpf.csproj -c Release -r win-x64 -o ./wpf/publish/win-x64-single -p:PublishSingleFile=true -p:SelfContained=true -p:PublishTrimmed=false -p:EnableCompressionInSingleFile=true
+```
+
+Maka file akan muncul di direktori ./wpf/publish/win-x64-selfcontained/
 
 ## Pull & Push Schema 💪🏻
 
@@ -49,6 +59,7 @@ Contoh: feature/navbar.arya
 `<type>(<scope>): <short_summary>`
 
 - `<type>` :
+
   - feat: saya menambahkan fitur baru
   - fix: saya memperbaiki fitur
 

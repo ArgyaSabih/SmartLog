@@ -18,6 +18,99 @@ namespace wpf
 
         public App()
         {
+            // Attempt to load .env from the wpf project folder (or nearby locations).
+            // This sets environment variables like API_KEY so the WPF app can read them at runtime.
+            try
+            {
+                var found = false;
+
+                var candidates = new[]
+                {
+                    Path.Combine(Directory.GetCurrentDirectory(), ".env"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "wpf", ".env"),
+                    Path.Combine(AppContext.BaseDirectory, ".env"),
+                    Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".env"),
+                    Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "wpf", ".env"),
+                };
+
+                foreach (var candidate in candidates)
+                {
+                    try
+                    {
+                        var full = Path.GetFullPath(candidate);
+                        if (!File.Exists(full))
+                            continue;
+
+                        var lines = File.ReadAllLines(full);
+                        foreach (var raw in lines)
+                        {
+                            var line = raw?.Trim();
+                            if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
+                                continue;
+                            var idx = line.IndexOf('=');
+                            if (idx <= 0) continue;
+                            var k = line.Substring(0, idx).Trim();
+                            var v = line.Substring(idx + 1).Trim();
+                            if ((v.StartsWith("\"") && v.EndsWith("\"")) || (v.StartsWith("'") && v.EndsWith("'")))
+                            {
+                                v = v.Substring(1, v.Length - 2);
+                            }
+                            Environment.SetEnvironmentVariable(k, v);
+                        }
+
+                        // Stop after the first existing .env
+                        found = true;
+                        break;
+                    }
+                    catch
+                    {
+                        // ignore parsing errors and try next candidate
+                    }
+                }
+
+                // If not found on disk, attempt reading an embedded .env resource inside the assembly
+                if (!found)
+                {
+                    try
+                    {
+                        var asm = typeof(App).Assembly;
+                        var names = asm.GetManifestResourceNames();
+                        var envRes = names.FirstOrDefault(n => n.EndsWith(".env", StringComparison.OrdinalIgnoreCase));
+                        if (envRes != null)
+                        {
+                            using var s = asm.GetManifestResourceStream(envRes);
+                            if (s != null)
+                            {
+                                using var reader = new System.IO.StreamReader(s);
+                                while (!reader.EndOfStream)
+                                {
+                                    var raw = reader.ReadLine();
+                                    var line = raw?.Trim();
+                                    if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
+                                        continue;
+                                    var idx = line.IndexOf('=');
+                                    if (idx <= 0) continue;
+                                    var k = line.Substring(0, idx).Trim();
+                                    var v = line.Substring(idx + 1).Trim();
+                                    if ((v.StartsWith("\"") && v.EndsWith("\"")) || (v.StartsWith("'") && v.EndsWith("'")))
+                                    {
+                                        v = v.Substring(1, v.Length - 2);
+                                    }
+                                    Environment.SetEnvironmentVariable(k, v);
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // ignore; best-effort only
+                    }
+                }
+            }
+            catch
+            {
+                // best-effort only; don't fail startup if .env not present or unreadable
+            }
             // Build Generic Host untuk Dependency Injection
             _host = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((context, config) =>

@@ -189,7 +189,7 @@
                         <!-- Left: Kapal Info -->
                         <StackPanel Grid.Column="0">
                             <!-- Destination / tujuan shown above the name -->
-                                <TextBlock x:Name="txtTujuan" Text="Surabaya" 
+                                <TextBlock x:Name="txtTujuan" Text="Tujuan: Surabaya" 
                                            FontSize="14" Foreground="#666666"/>
                             <!-- Ship name with status badge -->
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,6,0,10">
@@ -369,6 +369,25 @@
                                                                     Click="BtnDeleteBarang_Click"
                                                                     Margin="0,0,10,0"
                                                                     Padding="5">
+                                                                <Button.Style>
+                                                                    <Style TargetType="Button">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding Status}" Value="Proses">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding Status}" Value="Diproses">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding Status}" Value="Dibatalkan">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                            </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding Status}" Value="Selesai">
+                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Button.Style>
                                                                 <iconPacks:PackIconMaterial Kind="Close" 
                                                                                             Width="20" Height="20" 
                                                                                             Foreground="#F44336"/>
@@ -379,6 +398,25 @@
                                                                     Click="BtnVerifyBarang_Click"
                                                                     Margin="0,0,10,0"
                                                                     Padding="5">
+                                                                <Button.Style>
+                                                                    <Style TargetType="Button">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding Status}" Value="Proses">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding Status}" Value="Diproses">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding Status}" Value="Dibatalkan">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                            </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding Status}" Value="Selesai">
+                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Button.Style>
                                                                 <iconPacks:PackIconMaterial Kind="Check" 
                                                                                             Width="20" Height="20" 
                                                                                             Foreground="#4CAF50"/>

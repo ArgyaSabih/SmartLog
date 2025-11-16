@@ -103,6 +103,7 @@ $RECYCLE.BIN/
 # Publish profiles
 *.pubxml
 *.azurePubxml
+/publish
 
 # Migration files
 Migrations/

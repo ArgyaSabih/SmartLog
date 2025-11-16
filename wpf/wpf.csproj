@@ -21,4 +21,11 @@
     <PackageReference Include="supabase-csharp" Version="0.16.2" />
   </ItemGroup>
 
+  <!-- NOTE: .env copy removed — do not publish .env. Provide API_KEY via environment on target. -->
+  <!-- Optionally embed .env into the assembly as an embedded resource so the EXE contains it.
+       WARNING: embedding secrets into the binary is insecure (anyone can extract them). -->
+  <ItemGroup>
+    <EmbeddedResource Include=".env" />
+  </ItemGroup>
+
 </Project>
