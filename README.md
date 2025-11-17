@@ -14,22 +14,7 @@
 
 ## How To Run 🏃🏻‍♂️
 
-Masukan perintah berikut ke dalam terminal
-
-```
-cd wpf
-dotnet run
-```
-
-## How to Install 🥰
-
-Masukan perintah berikut
-
-```sh
-dotnet publish ./wpf/wpf.csproj -c Release -r win-x64 -o ./wpf/publish/win-x64-single -p:PublishSingleFile=true -p:SelfContained=true -p:PublishTrimmed=false -p:EnableCompressionInSingleFile=true
-```
-
-Maka file akan muncul di direktori ./wpf/publish/win-x64-selfcontained/
+Petunjuk untuk menjalankan kode di repositori ini ada di dalam file `./wpf/README.md`
 
 ## Pull & Push Schema 💪🏻
 
