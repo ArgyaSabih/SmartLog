@@ -5,13 +5,10 @@ Panduan lengkap untuk setup aplikasi SmartLog WPF dengan PostgreSQL database dar
 ## Daftar Isi
 
 1. [Prerequisites](#prerequisites)
-2. [Instalasi PostgreSQL](#instalasi-postgresql)
-3. [Setup Database](#setup-database)
-4. [Clone dan Setup Project](#clone-dan-setup-project)
-5. [Konfigurasi Connection String](#konfigurasi-connection-string)
-6. [Migrasi Database](#migrasi-database)
-7. [Menjalankan Aplikasi](#menjalankan-aplikasi)
-8. [Troubleshooting](#troubleshooting)
+2. [Clone dan Setup Project](#clone-dan-setup-project)
+3. [Konfigurasi Connection String](#konfigurasi-connection-string)
+4. [Konfigurasi koneksi API](#konfigurasi-koneksi-api)
+5. [Menginstall Aplikasi](#menjalankan-aplikasi)
 
 ---
 
@@ -23,7 +20,6 @@ Pastikan komputer Anda sudah memiliki:
 - **.NET 9.0 SDK** - Download dari [dotnet.microsoft.com](https://dotnet.microsoft.com/download)
 - **Visual Studio Code** dengan ekstensi C# Dev Kit
 - **Git** - Download dari [git-scm.com](https://git-scm.com/)
-- **PostgreSQL 14+** (akan dijelaskan di bawah)
 
 ---
 
@@ -40,15 +36,26 @@ dotnet list package
 **Packages yang terinstall:**
 
 - `Npgsql.EntityFrameworkCore.PostgreSQL` (9.0.4+)
+- `MahApps.Metro.IconPacks` (6.2.1)
 - `Microsoft.EntityFrameworkCore.Design` (9.0.10+)
 - `Microsoft.Extensions.Hosting` (9.0.10+)
 - `Microsoft.Extensions.Configuration` (9.0.10+)
+- `Microsoft.Extensions.Configuration.UserSecrets` (9.0.10+)
+- `supabase-csharp` (0.16.2)
 
 ---
 
+## Clone dan setup project
+
+### Lakukan clone project dengan perintah
+
+```sh
+git clone https://github.com/ArgyaSabih/SmartLog.git
+```
+
 ## Konfigurasi Connection String
 
-### Langkah 1: Edit appsettings.json
+### Edit appsettings.json
 
 Buka file `wpf/appsettings.json` dan sesuaikan connection string:
 
@@ -67,7 +74,9 @@ Buka file `wpf/appsettings.json` dan sesuaikan connection string:
 }
 ```
 
-### Langkah 2: Masukkan file .env
+## Konfigurasi koneksi API
+
+### Masukkan file .env
 
 Buka file `wpf/.env` dan masukan .env yang sudah dikirimkan
 
