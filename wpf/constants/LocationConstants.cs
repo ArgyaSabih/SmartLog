@@ -7,8 +7,11 @@ namespace wpf.constants
         public static readonly string[] AllowedLocations = new[]
         {
             "Jakarta",
+            "Semarang",
+            "Bali",
             "Turkey",
-            "London"
+            "London",
+            "Banyuwangi"
         };
     }
 }
