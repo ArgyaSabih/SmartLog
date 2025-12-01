@@ -109,12 +109,7 @@ namespace wpf.modules
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Gagal memuat data dari database: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                StyledMessageBox.ShowOk(this, "Error", $"Gagal memuat data dari database: {ex.Message}");
                 // Fallback to dummy data
                 LoadCustomerData();
                 LoadKapalData();
@@ -421,14 +416,9 @@ namespace wpf.modules
         // Event handler untuk logout
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
-                "Apakah Anda yakin ingin logout?",
-                "Konfirmasi Logout",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question
-            );
+            var logout = StyledMessageBox.ShowConfirm(this, "Konfirmasi Logout", "Apakah Anda yakin ingin logout?");
 
-            if (result == MessageBoxResult.Yes)
+            if (logout)
             {
                 // Buka LoginView
                 LoginView loginView = new LoginView();
@@ -491,23 +481,13 @@ namespace wpf.modules
                     return;
 
                 // Konfirmasi
-                var result = MessageBox.Show(
-                    $"Hapus kapal '{kapalData.NamaKapal}'?",
-                    "Konfirmasi Hapus",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question
-                );
-                if (result != MessageBoxResult.Yes)
+                var confirm = StyledMessageBox.ShowConfirm(this, "Konfirmasi Hapus", $"Hapus kapal '{kapalData.NamaKapal}'?");
+                if (!confirm)
                     return;
 
                 if (!long.TryParse(kapalData.IdKapal, out long kapalId))
                 {
-                    MessageBox.Show(
-                        "ID kapal tidak valid.",
-                        "Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                    StyledMessageBox.ShowOk(this, "Error", "ID kapal tidak valid.");
                     return;
                 }
 
@@ -518,31 +498,16 @@ namespace wpf.modules
                     // Remove from UI collection
                     Kapals.Remove(kapalData);
                     txtTotalKapal.Text = Kapals.Count.ToString();
-                    MessageBox.Show(
-                        "Kapal berhasil dihapus.",
-                        "Sukses",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
+                    StyledMessageBox.ShowOk(this, "Sukses", "Kapal berhasil dihapus.");
                 }
                 else
                 {
-                    MessageBox.Show(
-                        "Kapal tidak ditemukan atau gagal dihapus.",
-                        "Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                    StyledMessageBox.ShowOk(this, "Error", "Kapal tidak ditemukan atau gagal dihapus.");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Gagal menghapus kapal: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                StyledMessageBox.ShowOk(this, "Error", $"Gagal menghapus kapal: {ex.Message}");
             }
         }
 

@@ -32,7 +32,7 @@ namespace wpf.modules
                 string status = (cmbStatus.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Pending";
                 if (string.IsNullOrWhiteSpace(nama) || string.IsNullOrWhiteSpace(kapasitasStr))
                 {
-                    MessageBox.Show("Mohon isi Nama Kapal, Nomor Registrasi, dan Kapasitas.", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    StyledMessageBox.ShowOk(this, "Validasi", "Mohon isi Nama Kapal, Nomor Registrasi, dan Kapasitas.");
                     return;
                 }
                 // Generate REG-XXXXX (5 uppercase letters) and ensure uniqueness in DB (kode_registrasi column).
@@ -48,7 +48,7 @@ namespace wpf.modules
                 }
                 if (!decimal.TryParse(kapasitasStr, NumberStyles.Number, CultureInfo.InvariantCulture, out decimal kapasitasTon))
                 {
-                    MessageBox.Show("Kapasitas harus berupa angka (contoh: 2500 atau 2500.5).", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    StyledMessageBox.ShowOk(this, "Validasi", "Kapasitas harus berupa angka (contoh: 2500 atau 2500.5).");
                     return;
                 }
 
@@ -89,12 +89,12 @@ namespace wpf.modules
 
                 _parent.txtTotalKapal.Text = _parent.Kapals.Count.ToString();
 
-                MessageBox.Show("Kapal berhasil ditambahkan.", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                StyledMessageBox.ShowOk(this, "Sukses", "Kapal berhasil ditambahkan.");
                 this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Gagal menambahkan kapal: {ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                StyledMessageBox.ShowOk(this, "Error", $"Gagal menambahkan kapal: {ex}");
             }
         }
     }

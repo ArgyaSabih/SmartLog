@@ -51,7 +51,7 @@ public class Utils
     public static void DemonstrasiOOP()
     {
         Console.WriteLine("\n╔═══════════════════════════════════════════════╗");
-        Console.WriteLine("║   DEMONSTRASI KONSEP OOP - SMARTLOGISTIC      ║");
+        Console.WriteLine("║   DEMONSTRASI KONSEP OOP - SmartLog      ║");
         Console.WriteLine("╚═══════════════════════════════════════════════╝\n");
 
         // 1. INHERITANCE

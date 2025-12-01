@@ -31,12 +31,7 @@ namespace wpf.modules
 
                 if (kapal == null)
                 {
-                    MessageBox.Show(
-                        "Data kapal tidak ditemukan.",
-                        "Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                    StyledMessageBox.ShowOk(this, "Error", "Data kapal tidak ditemukan.");
                     this.Close();
                     return;
                 }
@@ -94,12 +89,7 @@ namespace wpf.modules
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Gagal memuat detail kapal: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                StyledMessageBox.ShowOk(this, "Error", $"Gagal memuat detail kapal: {ex.Message}");
                 this.Close();
             }
         }

@@ -120,7 +120,7 @@
                             <TextBlock Text="Registrasikan Dirimu!"
                                     Foreground="#000000" FontSize="28" FontWeight="Bold"
                                     HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                            <TextBlock Text="Selamat Datang di SmartLogistic!!"
+                            <TextBlock Text="Selamat Datang di SmartLog!!"
                                     Foreground="#A0A0A0" FontSize="15"
                                     HorizontalAlignment="Center" Margin="0,0,0,25"/>
                             

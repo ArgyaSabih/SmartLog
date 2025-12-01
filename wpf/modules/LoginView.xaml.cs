@@ -37,12 +37,7 @@ namespace wpf.modules
             // Validasi input
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show(
-                    "Email dan password harus diisi!",
-                    "Validasi",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning
-                );
+                StyledMessageBox.ShowOk(this, "Validasi", "Email dan password harus diisi!");
                 return;
             }
 
@@ -55,12 +50,8 @@ namespace wpf.modules
                 var customer = await _dbService.LoginCustomerAsync(email, password);
                 if (customer != null)
                 {
-                    MessageBox.Show(
-                        $"Login Customer Berhasil!\n\n{customer.GetUserInfo()}",
-                        "Sukses",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
+                    // don't show user details — just success message
+                    StyledMessageBox.ShowOk(this, "Sukses", "Login berhasil. Selamat datang.");
                     // Simpan session sederhana ke Application.Properties
                     Application.Current.Properties["CurrentUserRole"] = "Customer";
                     Application.Current.Properties["CurrentUserEmail"] = customer.Email;
@@ -77,12 +68,7 @@ namespace wpf.modules
                 var admin = await _dbService.LoginAdminAsync(email, password);
                 if (admin != null)
                 {
-                    MessageBox.Show(
-                        $"Login Admin Berhasil!\n\n{admin.GetUserInfo()}",
-                        "Sukses",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
+                    StyledMessageBox.ShowOk(this, "Sukses", "Login berhasil. Selamat datang.");
                     // Simpan session sederhana ke Application.Properties
                     Application.Current.Properties["CurrentUserRole"] = "Admin";
                     Application.Current.Properties["CurrentUserEmail"] = admin.Email;
@@ -94,21 +80,11 @@ namespace wpf.modules
                     return;
                 }
 
-                MessageBox.Show(
-                    "Email atau password salah.",
-                    "Login Gagal",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                StyledMessageBox.ShowOk(this, "Login Gagal", "Email atau password salah.");
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Terjadi kesalahan saat login: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                StyledMessageBox.ShowOk(this, "Error", $"Terjadi kesalahan saat login: {ex.Message}");
             }
         }
 

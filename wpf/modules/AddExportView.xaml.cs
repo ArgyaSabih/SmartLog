@@ -30,7 +30,7 @@ namespace wpf.modules
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Gagal memuat daftar kapal: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    StyledMessageBox.ShowOk(this, "Error", $"Gagal memuat daftar kapal: {ex.Message}");
                 }
             };
         }
@@ -57,20 +57,20 @@ namespace wpf.modules
 
             if (string.IsNullOrEmpty(nama) || string.IsNullOrEmpty(beratText))
             {
-                MessageBox.Show("Nama barang dan berat harus diisi.", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                StyledMessageBox.ShowOk(this, "Validasi", "Nama barang dan berat harus diisi.");
                 return;
             }
 
             if (!decimal.TryParse(beratText, out decimal beratKg) || beratKg <= 0)
             {
-                MessageBox.Show("Berat harus berupa angka lebih dari 0.", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                StyledMessageBox.ShowOk(this, "Validasi", "Berat harus berupa angka lebih dari 0.");
                 return;
             }
 
             long? customerId = Application.Current.Properties.Contains("CurrentUserId") ? Application.Current.Properties["CurrentUserId"] as long? : null;
             if (!customerId.HasValue)
             {
-                MessageBox.Show("Tidak dapat menemukan session user. Silakan login ulang.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                StyledMessageBox.ShowOk(this, "Error", "Tidak dapat menemukan session user. Silakan login ulang.");
                 return;
             }
 
@@ -103,14 +103,14 @@ namespace wpf.modules
                 var db = App.GetService<wpf.services.PostgresService>();
                 var saved = await db.AddPengirimanAsync(pengiriman);
 
-                MessageBox.Show($"Pengiriman berhasil ditambahkan (ID: #{_generatedCode}).", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                StyledMessageBox.ShowOk(this, "Sukses", $"Pengiriman berhasil ditambahkan (ID: #{_generatedCode}).");
                 this.DialogResult = true;
                 this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Gagal menyimpan pengiriman: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                MessageBox.Show(ex.ToString());
+                StyledMessageBox.ShowOk(this, "Error", $"Gagal menyimpan pengiriman: {ex.Message}");
+                StyledMessageBox.ShowOk(this, "Error", ex.ToString());
                 Console.WriteLine(ex);
                 Console.WriteLine(MessageBoxImage.Error);
             }

@@ -27,5 +27,10 @@
   <ItemGroup>
     <EmbeddedResource Include=".env" />
   </ItemGroup>
+  
+  <!-- Include images as resources so they are embedded into the assembly and available via pack URI -->
+  <ItemGroup>
+    <Resource Include="images\**\*" />
+  </ItemGroup>
 
 </Project>

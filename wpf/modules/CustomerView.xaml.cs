@@ -121,12 +121,7 @@ namespace wpf.modules
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Gagal memuat data: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                StyledMessageBox.ShowOk(this, "Error", $"Gagal memuat data: {ex.Message}");
                 LoadDummyData();
             }
         }
@@ -134,14 +129,9 @@ namespace wpf.modules
         // Event Handlers
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
-                "Apakah Anda yakin ingin logout?",
-                "Konfirmasi Logout",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question
-            );
+            var logout = StyledMessageBox.ShowConfirm(this, "Konfirmasi Logout", "Apakah Anda yakin ingin logout?");
 
-            if (result == MessageBoxResult.Yes)
+            if (logout)
             {
                 // Kembali ke LoginView
                 LoginView loginView = new LoginView();
@@ -163,22 +153,12 @@ namespace wpf.modules
                     // Refresh from DB to show newly added pengiriman
                     DaftarPengiriman.Clear();
                     LoadCustomerDataFromDbAsync();
-                    MessageBox.Show(
-                        "Pengiriman berhasil ditambahkan.",
-                        "Sukses",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
+                    StyledMessageBox.ShowOk(this, "Sukses", "Pengiriman berhasil ditambahkan.");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Gagal membuka form tambah pengiriman: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                StyledMessageBox.ShowOk(this, "Error", $"Gagal membuka form tambah pengiriman: {ex.Message}");
             }
         }
 
@@ -188,12 +168,7 @@ namespace wpf.modules
             DaftarPengiriman.Clear();
             LoadCustomerDataFromDbAsync();
 
-            MessageBox.Show(
-                "Data berhasil di-refresh!",
-                "Info",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information
-            );
+            StyledMessageBox.ShowOk(this, "Info", "Data berhasil di-refresh!");
         }
 
         private void BtnDetailPengiriman_Click(object sender, RoutedEventArgs e)
@@ -212,45 +187,25 @@ namespace wpf.modules
                     }
                     else
                     {
-                        MessageBox.Show(
-                            "ID pengiriman tidak valid.",
-                            "Error",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Error
-                        );
+                        StyledMessageBox.ShowOk(this, "Error", "ID pengiriman tidak valid.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(
-                        $"Gagal membuka detail: {ex.Message}",
-                        "Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                    StyledMessageBox.ShowOk(this, "Error", $"Gagal membuka detail: {ex.Message}");
                 }
             }
         }
 
         private void BtnPrevious_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(
-                "Halaman Previous",
-                "Pagination",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information
-            );
+            StyledMessageBox.ShowOk(this, "Pagination", "Halaman Previous");
             // TODO: Implement pagination logic
         }
 
         private void BtnNext_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(
-                "Halaman Next",
-                "Pagination",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information
-            );
+            StyledMessageBox.ShowOk(this, "Pagination", "Halaman Next");
             // TODO: Implement pagination logic
         }
 

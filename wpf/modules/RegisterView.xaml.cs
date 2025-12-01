@@ -44,14 +44,14 @@ namespace wpf.modules
                 string.IsNullOrWhiteSpace(telepon) || 
                 string.IsNullOrWhiteSpace(alamat))
             {
-                MessageBox.Show("Semua field harus diisi!", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                StyledMessageBox.ShowOk(this, "Validasi", "Semua field harus diisi!");
                 return;
             }
 
             // Validasi email sederhana
             if (!email.Contains("@") || !email.Contains("."))
             {
-                MessageBox.Show("Format email tidak valid!", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                StyledMessageBox.ShowOk(this, "Validasi", "Format email tidak valid!");
                 return;
             }
 
@@ -69,7 +69,8 @@ namespace wpf.modules
                     // Simpan ke database
                     var added = await _dbService.AddCustomerAsync(newCustomer);
 
-                    MessageBox.Show($"Registrasi Customer berhasil!\n\n{added.GetUserInfo()}\n\nSilakan login dengan akun baru Anda.", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+                    // Use styled message box and avoid showing user info for privacy
+                    StyledMessageBox.ShowOk(this, "Sukses", "Registrasi berhasil. Silakan login dengan akun baru Anda.");
 
                     // Kembali ke LoginView (await the dispatcher invocation so we don't fire-and-forget)
                     await this.Dispatcher.InvokeAsync(() =>
@@ -83,21 +84,21 @@ namespace wpf.modules
                 catch (Microsoft.EntityFrameworkCore.DbUpdateException dbex)
                 {
                     // Kemungkinan duplicate email atau constraint violation
-                    MessageBox.Show($"Registrasi gagal: {dbex.InnerException?.Message ?? dbex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    StyledMessageBox.ShowOk(this, "Error", $"Registrasi gagal: {dbex.InnerException?.Message ?? dbex.Message}");
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Terjadi kesalahan saat registrasi: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    StyledMessageBox.ShowOk(this, "Error", $"Terjadi kesalahan saat registrasi: {ex.Message}");
                 }
             }
             catch (ArgumentException ex)
             {
                 // ENCAPSULATION: Tangkap error dari validation
-                MessageBox.Show($"Registrasi gagal: {ex.Message}", "Error Validasi", MessageBoxButton.OK, MessageBoxImage.Error);
+                StyledMessageBox.ShowOk(this, "Error Validasi", $"Registrasi gagal: {ex.Message}");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Terjadi kesalahan: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                StyledMessageBox.ShowOk(this, "Error", $"Terjadi kesalahan: {ex.Message}");
             }
         }
 

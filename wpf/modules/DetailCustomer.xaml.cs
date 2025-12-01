@@ -151,23 +151,13 @@ namespace wpf.modules
                 }
                 else
                 {
-                    MessageBox.Show(
-                        "Data pengiriman tidak ditemukan.",
-                        "Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                    StyledMessageBox.ShowOk(this, "Error", "Data pengiriman tidak ditemukan.");
                     this.Close();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Gagal memuat detail: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                StyledMessageBox.ShowOk(this, "Error", $"Gagal memuat detail: {ex.Message}");
                 this.Close();
             }
         }

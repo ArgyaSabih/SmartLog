@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:wpf.modules"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
-        Title="Detail Kapal - SmartLogistic" 
+        Title="Detail Kapal - SmartLog" 
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
         Background="#F8F9FA"

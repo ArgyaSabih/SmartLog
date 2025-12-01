@@ -178,12 +178,7 @@ namespace wpf.modules
             catch (Exception ex)
             {
                 // Keep UI responsive; show simple message
-                MessageBox.Show(
-                    $"Gagal memuat data barang: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                StyledMessageBox.ShowOk(this, "Error", $"Gagal memuat data barang: {ex.Message}");
             }
         }
 
@@ -229,14 +224,9 @@ namespace wpf.modules
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
             // Konfirmasi logout
-            var result = MessageBox.Show(
-                "Apakah Anda yakin ingin logout?",
-                "Konfirmasi Logout",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question
-            );
+            var logoutConfirm = StyledMessageBox.ShowConfirm(this, "Konfirmasi Logout", "Apakah Anda yakin ingin logout?");
 
-            if (result == MessageBoxResult.Yes)
+            if (logoutConfirm)
             {
                 // Kembali ke LoginView
                 LoginView loginView = new LoginView();
@@ -261,60 +251,13 @@ namespace wpf.modules
             }
         }
 
-        // Show location details (from DB if available) and fetch weather from weatherapi.com
-        private async void BtnDetailLokasi_Click(object sender, RoutedEventArgs e)
+        // Show location details using a dialog that displays weather and richer UI
+        private void BtnDetailLokasi_Click(object sender, RoutedEventArgs e)
         {
             string lokasi = _kapalModel?.LokasiSekarang ?? txtLokasiSekarang.Text;
-            string kota = (lokasi ?? string.Empty).Split(',')[0].Trim();
-
-            // Read API key from environment variable `API_KEY` (ensure .env is loaded in your environment)
-            string? apiKey = Environment.GetEnvironmentVariable("API_KEY");
-            if (string.IsNullOrWhiteSpace(apiKey))
-            {
-                string message =
-                    $"Lokasi saat ini:\n{lokasi}\n\nStatus Verifikasi: {_kapalModel?.StatusVerifikasi ?? "Unknown"}\n\n" +
-                    "API_KEY belum diset. Silakan tambahkan API_KEY Anda ke file .env atau environment variables.";
-                MessageBox.Show(message, "Detail Lokasi", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            try
-            {
-                using var client = new System.Net.Http.HttpClient();
-                var url = $"https://api.weatherapi.com/v1/current.json?key={System.Uri.EscapeDataString(apiKey)}&q={System.Uri.EscapeDataString(kota)}&aqi=no";
-                var resp = await client.GetAsync(url);
-                if (!resp.IsSuccessStatusCode)
-                {
-                    MessageBox.Show($"Gagal mengambil data cuaca: {resp.StatusCode}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                using var stream = await resp.Content.ReadAsStreamAsync();
-                using var doc = await System.Text.Json.JsonDocument.ParseAsync(stream);
-                var root = doc.RootElement;
-                var loc = root.GetProperty("location");
-                var cur = root.GetProperty("current");
-
-                string locName = loc.GetProperty("name").GetString() ?? kota;
-                string region = loc.GetProperty("region").GetString() ?? string.Empty;
-                string country = loc.GetProperty("country").GetString() ?? string.Empty;
-                string localtime = loc.GetProperty("localtime").GetString() ?? string.Empty;
-                decimal tempC = cur.GetProperty("temp_c").GetDecimal();
-                string condition = cur.GetProperty("condition").GetProperty("text").GetString() ?? string.Empty;
-                decimal windKph = cur.GetProperty("wind_kph").GetDecimal();
-                int humidity = cur.GetProperty("humidity").GetInt32();
-
-                string message =
-                    $"Lokasi saat ini:\n{locName}{(string.IsNullOrWhiteSpace(region) ? "" : ", " + region)}{(string.IsNullOrWhiteSpace(country) ? "" : ", " + country)}\nWaktu lokal: {localtime}\n\n" +
-                    $"Cuaca: {condition}\nSuhu: {tempC} °C\nKelembapan: {humidity}%\nKecepatan angin: {windKph} kph\n\n" +
-                    $"Status Verifikasi: {_kapalModel?.StatusVerifikasi ?? "Unknown"}";
-
-                MessageBox.Show(message, "Detail Lokasi & Cuaca", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Gagal mengambil detail lokasi/cuaca: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            var dlg = new LocationDetailDialog(lokasi, _kapalModel?.StatusVerifikasi);
+            dlg.Owner = this;
+            dlg.ShowDialog();
         }
 
         // Update lokasi via small dialog and persist to DB
@@ -342,7 +285,7 @@ namespace wpf.modules
 
                     if (_kapalModel == null)
                     {
-                        MessageBox.Show("Gagal menemukan data kapal untuk pra-konfirmasi.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        StyledMessageBox.ShowOk(this, "Error", "Gagal menemukan data kapal untuk pra-konfirmasi.");
                         return;
                     }
 
@@ -363,8 +306,8 @@ namespace wpf.modules
                     }
                     msg += "Lanjutkan update lokasi?";
 
-                    var confirm = MessageBox.Show(msg, "Konfirmasi Update Lokasi", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (confirm != MessageBoxResult.Yes) return;
+                    var confirm = StyledMessageBox.ShowConfirm(this, "Konfirmasi Update Lokasi", msg);
+                    if (!confirm) return;
 
                     // Update model
                     if (_kapalModel == null)
@@ -388,32 +331,17 @@ namespace wpf.modules
                         // Update UI
                         txtLokasiSekarang.Text = _kapalModel.LokasiSekarang ?? newLoc;
 
-                        MessageBox.Show(
-                            "Lokasi kapal berhasil diperbarui.",
-                            "Sukses",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information
-                        );
+                        StyledMessageBox.ShowOk(this, "Sukses", "Lokasi kapal berhasil diperbarui.");
                     }
                     else
                     {
-                        MessageBox.Show(
-                            "Gagal menemukan data kapal untuk diupdate.",
-                            "Error",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Error
-                        );
+                        StyledMessageBox.ShowOk(this, "Error", "Gagal menemukan data kapal untuk diupdate.");
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Gagal mengupdate lokasi: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                StyledMessageBox.ShowOk(this, "Error", $"Gagal mengupdate lokasi: {ex.Message}");
             }
         }
 
@@ -425,14 +353,8 @@ namespace wpf.modules
                 if (!(sender is FrameworkElement fe) || !(fe.DataContext is BarangData barangData))
                     return;
 
-                var confirm = MessageBox.Show(
-                    $"Verifikasi barang '{barangData.NamaBarang}'?\n\nStatus pengiriman akan diubah menjadi 'Proses'.",
-                    "Konfirmasi Verifikasi",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question
-                );
-
-                if (confirm != MessageBoxResult.Yes)
+                var confirm = StyledMessageBox.ShowConfirm(this, "Konfirmasi Verifikasi", $"Verifikasi barang '{barangData.NamaBarang}'?\n\nStatus pengiriman akan diubah menjadi 'Proses'.");
+                if (!confirm)
                     return;
 
                 var db = App.GetService<wpf.services.PostgresService>();
@@ -443,34 +365,19 @@ namespace wpf.modules
                     pengiriman.UpdateStatus("Proses");
                     await db.UpdatePengirimanAsync(pengiriman);
 
-                    MessageBox.Show(
-                        "Barang berhasil diverifikasi.\nStatus pengiriman diubah menjadi 'Proses'.",
-                        "Sukses",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
+                    StyledMessageBox.ShowOk(this, "Sukses", "Barang berhasil diverifikasi.\nStatus pengiriman diubah menjadi 'Proses'.");
 
                     // Reload data to reflect changes
                     await LoadBarangDataFromDbAsync();
                 }
                 else
                 {
-                    MessageBox.Show(
-                        "Data pengiriman tidak ditemukan.",
-                        "Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                    StyledMessageBox.ShowOk(this, "Error", "Data pengiriman tidak ditemukan.");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Gagal memverifikasi barang: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                StyledMessageBox.ShowOk(this, "Error", $"Gagal memverifikasi barang: {ex.Message}");
             }
         }
 
@@ -482,14 +389,9 @@ namespace wpf.modules
                 if (!(sender is FrameworkElement fe) || !(fe.DataContext is BarangData barangData))
                     return;
 
-                var confirm = MessageBox.Show(
-                    $"Batalkan pengiriman barang '{barangData.NamaBarang}'?\n\nStatus pengiriman akan diubah menjadi 'Dibatalkan'.",
-                    "Konfirmasi Pembatalan",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning
-                );
+                var confirm = StyledMessageBox.ShowConfirm(this, "Konfirmasi Pembatalan", $"Batalkan pengiriman barang '{barangData.NamaBarang}'?\n\nStatus pengiriman akan diubah menjadi 'Dibatalkan'.");
 
-                if (confirm != MessageBoxResult.Yes)
+                if (!confirm)
                     return;
 
                 var db = App.GetService<wpf.services.PostgresService>();
@@ -500,34 +402,19 @@ namespace wpf.modules
                     pengiriman.UpdateStatus("Dibatalkan");
                     await db.UpdatePengirimanAsync(pengiriman);
 
-                    MessageBox.Show(
-                        "Pengiriman barang berhasil dibatalkan.\nStatus diubah menjadi 'Dibatalkan'.",
-                        "Sukses",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
+                    StyledMessageBox.ShowOk(this, "Sukses", "Pengiriman barang berhasil dibatalkan.\nStatus diubah menjadi 'Dibatalkan'.");
 
                     // Reload data to reflect changes
                     await LoadBarangDataFromDbAsync();
                 }
                 else
                 {
-                    MessageBox.Show(
-                        "Data pengiriman tidak ditemukan.",
-                        "Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                    StyledMessageBox.ShowOk(this, "Error", "Data pengiriman tidak ditemukan.");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Gagal membatalkan pengiriman: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
+                StyledMessageBox.ShowOk(this, "Error", $"Gagal membatalkan pengiriman: {ex.Message}");
             }
         }
 

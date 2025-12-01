@@ -24,19 +24,19 @@ namespace wpf.modules
         {
             if (string.IsNullOrWhiteSpace(NamaBarang))
             {
-                MessageBox.Show("Nama barang tidak boleh kosong", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                StyledMessageBox.ShowOk(this, "Validasi", "Nama barang tidak boleh kosong");
                 return;
             }
 
             if (!decimal.TryParse(txtBeratKg.Text.Trim(), out decimal berat) || berat <= 0)
             {
-                MessageBox.Show("Berat harus berupa angka lebih dari 0 (satuan kg).", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                StyledMessageBox.ShowOk(this, "Validasi", "Berat harus berupa angka lebih dari 0 (satuan kg).");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(Customer))
             {
-                MessageBox.Show("Customer tidak boleh kosong", "Validasi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                StyledMessageBox.ShowOk(this, "Validasi", "Customer tidak boleh kosong");
                 return;
             }
 
