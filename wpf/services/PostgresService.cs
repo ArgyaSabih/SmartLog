@@ -274,6 +274,15 @@ public class PostgresService
             var existing = await _db.Kapals.AsNoTracking().FirstOrDefaultAsync(k => k.KapalId == kapal.KapalId);
             string? oldLocation = existing?.LokasiSekarang;
 
+            // Determine if kapal has reached its tujuan
+            bool kapalAtTujuan = string.Equals(kapal.LokasiSekarang?.Trim(), kapal.LokasiTujuan?.Trim(), StringComparison.OrdinalIgnoreCase);
+
+            // If kapal reached tujuan, ensure kapal status is updated to 'Verified' in DB
+            if (kapalAtTujuan && !string.Equals(kapal.StatusVerifikasi, "Verified", StringComparison.OrdinalIgnoreCase))
+            {
+                kapal.StatusVerifikasi = "Verified";
+            }
+
             // Update kapal
             _db.Kapals.Update(kapal);
             await _db.SaveChangesAsync();
@@ -288,7 +297,7 @@ public class PostgresService
                     .Where(p => p.KapalId == kapal.KapalId && (p.StatusPengiriman == "Proses" || p.StatusPengiriman == "Diproses"))
                     .ToListAsync();
 
-                bool kapalAtTujuan = string.Equals(kapal.LokasiSekarang?.Trim(), kapal.LokasiTujuan?.Trim(), StringComparison.OrdinalIgnoreCase);
+                // kapalAtTujuan already computed above; reuse that value here
 
                 foreach (var p in toUpdate)
                 {

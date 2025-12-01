@@ -39,11 +39,26 @@ namespace wpf.modules
                 // Header
                 txtNamaKapal.Text = kapal.NamaKapal ?? "-";
 
-                // Status
-                txtStatus.Text = kapal.StatusVerifikasi ?? "Pending";
+                // Determine displayed status: if kapal berada di tujuan, show "Verified"
+                string lokasiSekarang = kapal.LokasiSekarang ?? string.Empty;
+                string lokasiTujuan = kapal.LokasiTujuan ?? string.Empty;
 
-                // Status color mapping
-                switch (kapal.StatusVerifikasi?.ToLower())
+                string statusText;
+                if (!string.IsNullOrWhiteSpace(lokasiSekarang) &&
+                    !string.IsNullOrWhiteSpace(lokasiTujuan) &&
+                    string.Equals(lokasiSekarang.Trim(), lokasiTujuan.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    statusText = "Verified";
+                }
+                else
+                {
+                    statusText = kapal.StatusVerifikasi ?? "Pending";
+                }
+
+                txtStatus.Text = statusText;
+
+                // Status color mapping (based on displayed status)
+                switch (statusText?.ToLower())
                 {
                     case "verified":
                         borderStatus.Background = new System.Windows.Media.SolidColorBrush(

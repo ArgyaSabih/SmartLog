@@ -325,11 +325,11 @@ namespace wpf.modules
                         var db = App.GetService<wpf.services.PostgresService>();
                         await db.UpdateKapalAsync(_kapalModel);
 
+                        // Reload kapal from DB to get updated status (auto-set to 'Verified' when reached tujuan)
+                        await LoadKapalFromDbAsync();
+
                         // Refresh barang list so statuses/locations reflect cascade updates
                         await LoadBarangDataFromDbAsync();
-
-                        // Update UI
-                        txtLokasiSekarang.Text = _kapalModel.LokasiSekarang ?? newLoc;
 
                         StyledMessageBox.ShowOk(this, "Sukses", "Lokasi kapal berhasil diperbarui.");
                     }
